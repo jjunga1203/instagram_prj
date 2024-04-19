@@ -1,13 +1,18 @@
 {% extends "base.html" %}
 
 {% block content %}
-게시물 작성화면
+    <h1>게시물 생성 페이지</h1>
+    <form action='{% url "posts:create" %}' method='POST'>
+        {% csrf_token %}
+        {{ form }}
+        <input type='submit' value='작성 완료'/>
+    </form>
+    <hr>
 {% endblock content %}
 
 {% block script %}
 
 {% endblock script %}
-
 
 
 

@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>DETAIL</h2>
+    <h3>{{ post.pk }} 번째 글</h3>
+    <hr>
+    <p>작성자: {{ post.user }}</p>
+    <p>제목: {{ post.title }}</p>
+    <p>내용: {{ post.content }}</p>
+    <hr>
+    {% if request.user == post.user %}
+        <a href='{% url "posts:update" pk=post.pk %}'>[수정하기]</a>
+        <hr>
+        <a href='{% url "posts:delete" pk=post.pk %}'>[삭제하기]</a>
+        <hr>
+    {% endif %}
+    <h3>댓글 목록( {{ comments|length }} )</h3>
+    <ol>
+        {% if comments %}
+            {% for comment in comments %}
+                <li>
+                    {{ comment.content }}
+                    {% if request.user == comment.user %}
+                        <form action=' {% url "posts:delete_comment" post_id=post.pk comment_id=comment.id %}' method='POST'>
+                            {% csrf_token %}
+                            <input type='submit' value='댓글 삭제하기'>
+                        </form>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        {% else %}
+                <div>댓글이 없습니다.</div>
+        {% endif %}
+    </ol>
+    <form action='{% url 'posts:create_comment' pk=post.pk %}' method='POST'>
+        {% csrf_token %}
+        {{ comment_form }}
+        <input type='submit' value='댓글 작성하기'>
+    </form>
+    <hr>
+    <a href='{% url "posts:home" %}'>[back]</a>
+{% endblock content %}

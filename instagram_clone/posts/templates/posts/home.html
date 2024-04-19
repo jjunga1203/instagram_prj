@@ -1,4 +1,34 @@
+HEAD
+{% extends 'base.html' %}
+
+>>>>>>> 40a4e6f5ba11574fafa6c208c0a605af31971602
 {% block content %}
+    <form method="post" action="/image/" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="image">
+        <button type="submit">Upload</button>
+    </form>
+    <h1>Posts</h1>
+    <a href='{% url "posts:create" %}'>게시글 작성하기</a>
+    <hr>
+    {% for post in posts %}
+      <p>글 번호: {{ post.pk }}</p>
+      <p>글 작성자: {{ post.user }}</p>
+      <a href='{% url "posts:detail" pk=post.pk %}'>
+        <p>글 제목: {{ post.title }}</p>
+      </a>
+      <p>글 내용: {{ post.content }}</p>
+      <form action=' {% url "posts:post_like" post_id=post.pk %}' method='POST'>
+        {% csrf_token %}
+        {% if request.user in post.like_users.all %}
+          <input type='submit' value = '좋아요 취소하기'>
+        {% else %}
+          <input type='submit' value = '좋아요'>
+        {% endif %}
+      </form>
+      <hr>
+    {% endfor %}
+
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <div class="grid-container">
