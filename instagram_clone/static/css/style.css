@@ -1,6 +1,6 @@
 .grid-container {
     display: grid;
-    grid-template-columns: 1fr 10fr 1fr; /* 섹션을 적절한 비율로 나눕니다. */
+    grid-template-columns: 1fr 4fr 1fr; /* 섹션을 적절한 비율로 나눕니다. */
     grid-gap: 20px; /* 그리드 아이템 간격을 조절합니다. */
 }
 
@@ -17,4 +17,6 @@
 
 .icon {
     margin-bottom: 20px;
+    width: 50px;
+    height: auto;
 }
