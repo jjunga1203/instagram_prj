@@ -1,11 +1,6 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <form method="post" action="/image/" enctype="multipart/form-data">
-        {% csrf_token %}
-        <input type="file" name="image">
-        <button type="submit">Upload</button>
-    </form>
     <h1>Posts</h1>
     <a href='{% url "posts:create" %}'>게시글 작성하기</a>
     <hr>
