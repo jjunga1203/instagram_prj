@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% load static %}
+<div id="sidebar">
+    <nav>
+        <img src="{% static "images/posts/logo.png" %}" class="icon" alt="logo">
+        <img src="{% static "images/posts/home.png" %}" class="icon" alt="home">
+        <img src="{% static "images/posts/search.png" %}" class="icon" alt="search">
+        <img src="{% static "images/posts/messages.png" %}" class="icon" alt="messages">
+        <img src="{% static "images/posts/notifications.png" %}" class="icon" alt="notifications">
+    </nav>
+</div>
+{% endblock content %}
