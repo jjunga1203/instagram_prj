@@ -16,8 +16,18 @@ from django.http import JsonResponse
 
 
 # Create your views here.
-def profile(request):
-    return render(request, 'accounts/profile.html')
+
+# 개인 프로파일 화면
+def profile(request, user_idx):
+    # print(username)
+    if not request.user.is_authenticated:
+        return redirect('accounts:login')
+    user = User.objects.get(pk=user_idx)
+    context = {
+        'user':user,
+    }
+
+    return render(request, 'accounts/profile.html', context)
 
 def signup(request):
     # 이미 로그인한 경우, 회원가입 로직 실행 막기
@@ -40,7 +50,7 @@ def signup(request):
 def login(request):
     # 이미 로그인한 경우, 정보화면으로 이동
     if request.user.is_authenticated:
-        return redirect('accounts:index', request.user.id)
+        return redirect('accounts:profile', request.user.id)
     
     # 로그인 시도
     # 세션을 생성! 하니까 POST
