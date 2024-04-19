@@ -1,0 +1,45 @@
+<<<<<<< HEAD
+{% extends 'base.html' %}
+
+{% block content %}
+    <form method="post" action="/image/" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="image">
+        <button type="submit">Upload</button>
+    </form>
+    <h1>Posts</h1>
+    <a href='{% url "posts:create" %}'>게시글 작성하기</a>
+    <hr>
+    {% for post in posts %}
+      <p>글 번호: {{ post.pk }}</p>
+      <p>글 작성자: {{ post.user }}</p>
+      <a href='{% url "posts:detail" pk=post.pk %}'>
+        <p>글 제목: {{ post.title }}</p>
+      </a>
+      <p>글 내용: {{ post.content }}</p>
+      <form action=' {% url "posts:post_like" post_id=post.pk %}' method='POST'>
+        {% csrf_token %}
+        {% if request.user in post.like_users.all %}
+          <input type='submit' value = '좋아요 취소하기'>
+        {% else %}
+          <input type='submit' value = '좋아요'>
+        {% endif %}
+      </form>
+      <hr>
+    {% endfor %}
+=======
+{% extends "base.html" %}
+
+{% block content %}
+{% load static %}
+<div id="sidebar">
+    <nav>
+        <img src="{% static "images/posts/logo.png" %}" class="icon" alt="logo">
+        <img src="{% static "images/posts/home.png" %}" class="icon" alt="home">
+        <img src="{% static "images/posts/search.png" %}" class="icon" alt="search">
+        <img src="{% static "images/posts/messages.png" %}" class="icon" alt="messages">
+        <img src="{% static "images/posts/notifications.png" %}" class="icon" alt="notifications">
+    </nav>
+</div>
+>>>>>>> 8b4ad2af7e6317e77f9982df87c83ce06bb10d8d
+{% endblock content %}
