@@ -34,6 +34,7 @@ STATIC_URL = 'static/'
 AUTH_USER_MODEL = 'accounts.User'
 
 INSTALLED_APPS = [
+    'storages',
     'accounts',
     # 'direct_msgs',
     'posts',
@@ -136,3 +137,16 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# AWS 설정
+# aws IAM 에서 사용자 생성 후 액세스 키 입력 
+AWS_ACCESS_KEY_ID = ''
+AWS_SECRET_ACCESS_KEY = ''
+
+# s3에서 생성한 bucket 이름 
+AWS_STORAGE_BUCKET_NAME = 'test-moon'
+AWS_S3_SIGNATURE_VERSION = 's3v4'
+AWS_S3_REGION_NAME = 'ap-northeast-2'
+
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'

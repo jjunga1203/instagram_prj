@@ -7,24 +7,36 @@
     <p>작성자: {{ post.user }}</p>
     <p>제목: {{ post.title }}</p>
     <p>내용: {{ post.content }}</p>
+    {% if post.image %}
+        <img src="{{ post.image }}" alt="Post Image">
+    {% endif %}
     <hr>
     {% if request.user == post.user %}
         <a href='{% url "posts:update" pk=post.pk %}'>[수정하기]</a>
         <hr>
-        <a href='{% url "posts:delete" pk=post.pk %}'>[삭제하기]</a>
+        <a href='#' onclick="confirmDeletePost('{{ post.pk }}')">[삭제하기]</a>
         <hr>
+        <script>
+            function confirmDeletePost(postId) {
+                if (confirm("정말로 삭제하시겠습니까?")) {
+                    window.location.href = "{% url 'posts:delete' pk=post.pk %}";
+                }
+            }
+        </script>
     {% endif %}
     <h3>댓글 목록( {{ comments|length }} )</h3>
     <ol>
         {% if comments %}
             {% for comment in comments %}
                 <li>
-                    {{ comment.content }}
+                    <strong>{{ comment.user.username }}</strong> {{ comment.content }}
                     {% if request.user == comment.user %}
-                        <form action=' {% url "posts:delete_comment" post_id=post.pk comment_id=comment.id %}' method='POST'>
-                            {% csrf_token %}
-                            <input type='submit' value='댓글 삭제하기'>
-                        </form>
+                    <a href='{% url "posts:edit_comment" pk=comment.pk %}'>[댓글 수정하기]</a>
+                    <a href='{% url "posts:delete_comment" post_id=post.pk comment_id=comment.id %}' onclick="event.preventDefault(); if(confirm('정말로 삭제하시겠습니까?')){document.getElementById('delete-form-{{ comment.id }}').submit();}">[댓글 삭제하기]</a>
+                    <form id="delete-form-{{ comment.id }}" action='{% url "posts:delete_comment" post_id=post.pk comment_id=comment.id %}' method='POST' style="display: none;">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ request.path }}">
+                    </form>
                     {% endif %}
                 </li>
             {% endfor %}
@@ -38,5 +50,8 @@
         <input type='submit' value='댓글 작성하기'>
     </form>
     <hr>
-    <a href='{% url "posts:home" %}'>[back]</a>
+    {% if request.META.HTTP_REFERER %}
+    | <a href="{{ request.META.HTTP_REFERER }}">[뒤로 가기]</a>
+    <a href='{% url "posts:home" %}'>[홈으로]</a>
+    {% endif %}
 {% endblock content %}
