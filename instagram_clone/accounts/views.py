@@ -15,6 +15,8 @@ from .models import User
 from django.http import JsonResponse
 
 
+from django.core.files.storage import default_storage
+
 # Create your views here.
 
 # 개인 프로파일 화면
@@ -29,15 +31,33 @@ def profile(request, user_idx):
 
     return render(request, 'accounts/profile.html', context)
 
+
+# 가입시 -> 사진 업로드
+def upload_img(request):
+    if request.method == 'POST':
+        file = request.FILES['profile_img']
+        filename = default_storage.save(file.name, file)
+        file_url = default_storage.url(filename)
+        print(filename , file_url)
+        # file_url + '/' + filename
+    #     form.save()
+    #     return redirect('accounts:login')
+        return redirect(request, 'accounts:profile')
+                   
 def signup(request):
     # 이미 로그인한 경우, 회원가입 로직 실행 막기
-    # if request.user.is_authenticated:
-    #     return redirect('accounts:index', request.user.id)
+    if request.user.is_authenticated:
+        return redirect('accounts:profile', request.user.id)
     
     if request.method == 'POST':
         # form = UserCreationForm(request.POST)
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
+            file = request.FILES['image']
+            filename = default_storage.save(file.name, file)
+            file_url = default_storage.url(filename)
+            print(filename , file_url)
+            form.profile_url = file_url + '/' + filename
             form.save()
             return redirect('accounts:login')
     else:
@@ -66,3 +86,15 @@ def login(request):
         'form':form
     }
     return render(request, 'accounts/login.html', context)
+
+# logout은 반드시 로그인 상태가 필수조건
+@login_required
+def logout(request):
+    auth_logout(request)
+    return redirect('accounts:login')
+
+
+# # 이미지 업로드 관련
+# def image(request):
+
+#     return render(request, 'sample/index.html')
