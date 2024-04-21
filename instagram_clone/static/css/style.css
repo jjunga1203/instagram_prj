@@ -1,22 +1,106 @@
 .grid-container {
     display: grid;
-    grid-template-columns: 1fr 4fr 1fr; /* 섹션을 적절한 비율로 나눕니다. */
-    grid-gap: 20px; /* 그리드 아이템 간격을 조절합니다. */
+    grid-template-columns: 1fr 5fr;
+    grid-gap: 20px;
+    height: 100vh;
 }
 
 .grid-item {
     padding: 20px;
-    border: 1px solid #ccc;
-    /* 그리드 아이템의 스타일을 지정합니다. */
+    border: 0;
 }
 
-#sidebar {
+#navbar-section {
     display: flex;
     flex-direction: column;
+    border-right: 1px solid #ccc;
+}
+
+.logo {
+    width: 22px; 
+    height: auto;
+    margin-top: 20px;
+    margin-bottom: 55px;
+}
+
+.icon-text {
+    display: flex; 
+    align-items: center;
+    margin-bottom: 30px;
 }
 
 .icon {
-    margin-bottom: 20px;
-    width: 50px;
+    width: 22px;
+    height: auto;
+    margin-right: 10px;
+}
+#main-section {
+    display: flex;
+    flex-direction: column;
+    padding: 20px 100px;
+}
+
+.stories {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto; /* Enable horizontal scrolling if needed */
+    margin-bottom: 20px; /* Add margin between stories and posts */
+}
+
+.stories-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center align items horizontally */
+    text-align: center; /* Center align text */
+    margin-right: 15px; /* Add space between stories cards */
+}
+
+.posts {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.post {
+    background: #fff;
+    border-bottom: 1px solid #dfdfdf;
+    width: 500px;
+    margin-bottom: 20px; /* Add margin between posts */
+    padding-bottom: 20px;
+}
+
+.profile-card {
+    width: 100%;
+    background: #fff;
+    border: 1px solid #dfdfdf;
+    padding: 20px;
+    text-align: center;
+}
+
+.profile-pic img {
+    width: 60px; /* Adjust profile picture size */
+    height: auto;
+    border-radius: 50%; /* Make profile picture circular */
+    object-fit: cover; /* Maintain aspect ratio */
+    margin-bottom: 10px; /* Add space below profile picture */
+}
+
+.user {
+    display: inline-block; /* Set display to inline-block */
+}
+
+.profile-pic {
+    display: inline-block; /* Set display to inline-block */
+    vertical-align: middle; /* Align vertically in the middle */
+    margin-right: 10px; /* Add some space between profile-pic and username */
+}
+
+.username {
+    display: inline-block; /* Set display to inline-block */
+    vertical-align: middle; /* Align vertically in the middle */
+}
+
+.post-image {
+    width: 100%;
     height: auto;
 }
