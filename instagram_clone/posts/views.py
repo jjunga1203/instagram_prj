@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
-from .models import Post, Comment
-from .forms import PostForm, CommentForm
+from .models import Post, Comment, Feed
+from .forms import PostForm, CommentForm, FeedForm
 from django.contrib.auth.decorators import login_required
 from django.core.files.storage import default_storage
 from django.utils.datastructures import MultiValueDictKeyError

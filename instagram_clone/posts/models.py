@@ -27,3 +27,10 @@ class PostLikeUsers(models.Model):
 
     class Meta:
         db_table = 'post_like_users'
+
+class Feed(models.Model):
+    content = models.TextField()
+    image = models.ImageField(upload_to='images/', max_length=1000)  # 이미지 필드로 수정
+    profile_image = models.ImageField(upload_to='profile_images/')  # 프로필 이미지 필드
+    user_id = models.TextField()
+    like_count = models.IntegerField()
