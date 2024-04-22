@@ -24,7 +24,7 @@ class User(AbstractUser):
     gender = models.CharField(max_length=1, choices=gender_choices, default='O')
     is_notify = models.BooleanField(default = True)
 
-    profile_url = models.CharField(max_length=255, default='')
+    profile_url = models.TextField(default='')
 
 
 

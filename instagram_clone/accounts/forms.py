@@ -24,3 +24,19 @@ class CustomUserCreationForm(UserCreationForm):
             # 'password' : '비밀번호',
         }
 
+class CustomUserChangeForm(UserChangeForm):
+    class Meta(UserChangeForm.Meta):
+        model = get_user_model()
+        # 'profile_img', email
+        fields = ('introduce', 'gender', 'is_notify')
+      
+        widgets = {
+            'is_notify': forms.CheckboxInput(),
+            'introduce':forms.TextInput(attrs={"placeholder" : "자기소개를 입력하세요"}),
+        }
+        labels = {
+            'gender' : '성별',
+            'introduce' : '자기소개',
+            'is_notify' : '알림여부',
+            # 'password' : '비밀번호',
+        }
