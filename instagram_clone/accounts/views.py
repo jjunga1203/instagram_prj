@@ -22,12 +22,7 @@ from django.utils.datastructures import MultiValueDictKeyError
 from django.http import JsonResponse
 
 # Create your views here.
-def profile(request, username):
-    user = get_user_model().objects.get(username=username)
-    context = {
-        'user': user
-    }
-    return render(request, 'accounts/profile.html', context)
+
 def change_pw(request, user_idx):
     if not request.user.is_authenticated:
         return redirect('accounts:login')
@@ -61,7 +56,7 @@ def profile(request, user_idx):
         return redirect('accounts:login')
     # user = CustomUserChangeForm(request.user, request.POST)
 
-    if request.method == 'post':
+    if request.method == 'POST':
         user = User.objects.get(pk=user_idx)
         context = {
             'user':user,
@@ -154,7 +149,7 @@ def login(request):
         if form.is_valid():
             auth_login(request, form.get_user())
             print(request.user.id)
-            return redirect('accountscd:profile', request.user.id)
+            return redirect('accounts:profile', request.user.id)
 
     form = AuthenticationForm()
     context = {

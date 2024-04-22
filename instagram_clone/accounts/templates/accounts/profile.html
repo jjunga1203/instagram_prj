@@ -1,9 +1,10 @@
 {% extends "base.html" %}
 
 {% block content %}
+
 <h3> {{ request.user }} 프로필 페이지</h3>
-<<<<<<< HEAD
-{% if request.user !=user %}
+
+{% if request.user != user %}
     <form action="{% url "accounts:follow" user_id=user.id %}" method="POST">
         {% csrf_token %}
         {% if request.user in user.followers.all %}
@@ -13,7 +14,6 @@
         {% endif %}
     </form>
 {% endif %}
-=======
 
 <p>자기소개 : {{ user.introduce }} </p>
 
@@ -95,8 +95,6 @@
     </div>
 </div>
 
-
->>>>>>> origin/jjunga
 {% endblock content %}
 
 {% block script %}
