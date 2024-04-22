@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- add_box id 속성 추가 -->
+<span id="add_feed" class="material-icons-outlined">add_box</span>
+
+<div id="modal_add_feed" class="modal_overlay">
+    <div class="modal_window">
+        <div class="modal_title">
+            <div class="modal_title_side"></div>
+            <div> 새 게시물 </div>
+            <div class="modal_title_side">
+                <span id="close_modal" class="material-icons-outlined">
+                    close
+                </span>
+                <span id="next_modal" class="material-icons-outlined">
+                    next
+                </span>
+            </div>
+        </div>
+        <div class="modal_image_upload" id="dropZone">이미지 파일을 여기로 드래그해 가져오세요.</div>
+    </div>
+</div>
+
+<script>
+    // 모달 띄우기 코드
+    const modal = document.getElementById("modal_add_feed");
+    const buttonAddFeed = document.getElementById("add_feed");
+    buttonAddFeed.addEventListener("click", e => {
+        modal.style.top = window.pageYOffset + 'px'; // top을 이용해 시작 y위치를 바꿔줌 
+        modal.style.display = "flex";
+        document.body.style.overflowY = "hidden"; // 스크롤 없애기
+    });
+    // 모달 닫기 코드
+    const buttonCloseModal = document.getElementById("close_modal");
+    buttonCloseModal.addEventListener("click", e => {
+        modal.style.display = "none";
+        document.body.style.overflowY = "visible";
+    });
+    // 모달 넥스트 코드
+    const buttonNextModal = document.getElementById("next_modal");
+    buttonNextModal.style.display = "none"; // 초기에는 숨김 처리
+    buttonNextModal.addEventListener("click", e => {
+        const nextModalContent = document.getElementById("next_modal_content");
+        const modalWindow = document.querySelector(".modal_window");
+
+        // 오른쪽 공간 확장
+        modalWindow.style.width = "calc(100% - 200px)"; // 오른쪽 공간 확장
+        modalWindow.style.transition = "width 0.5s ease-in-out";
+
+        // 내용을 쓸 수 있는 공간 표시
+        nextModalContent.style.display = "block";
+    })
+    var dropZone = document.getElementById('dropZone');
+
+    dropZone.addEventListener('dragover', dragOver, false);
+    dropZone.addEventListener('dragleave', dragOver, false);
+    dropZone.addEventListener('drop', uploadFiles, false);
+
+    function dragOver(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        
+        if (e.type === 'dragover') {
+            e.target.style.backgroundColor = 'black';
+            e.target.style.outlineOffset = '-20px';
+        } else {
+            e.target.style.backgroundColor = 'white';
+            e.target.style.outlineOffset = '-10px';
+        }
+    }
+
+    function uploadFiles(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        
+        var files = e.dataTransfer.files;
+
+        if (files.length > 1) {
+            alert('하나만 올려라.');
+            return;
+        }
+
+        if (files[0].type.match(/image.*/)) {
+            e.target.style.backgroundImage = 'url(' + window.URL.createObjectURL(files[0]) + ')';
+            e.target.style.outline = 'none';
+            e.target.style.backgroundSize = '100% 100%';
+            // 이미지 파일을 올려놓으면 문구를 사라지게 만들기
+            e.target.textContent = '';
+            // 이미지가 올라오면 버튼 넥스트 모달 나타나기
+            buttonNextModal.style.display = "block";
+        } else {
+            alert('이미지가 아닙니다.');
+            return;
+        }
+    }
+</script>
+{% endblock content %}

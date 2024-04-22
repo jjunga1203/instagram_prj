@@ -14,5 +14,6 @@ urlpatterns = [
     path('like/<int:post_id>/', views.post_like, name='post_like'),
     path('image/', views.image, name='image'),
     path('edit_comment/<int:pk>/', views.edit_comment, name='edit_comment'),
+    path('insta_post/', views.insta_post, name='insta_post'),
 ]
 

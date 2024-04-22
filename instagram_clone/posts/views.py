@@ -16,37 +16,12 @@ def image(request):
         print("No image file uploaded.")
     return render(request, 'posts/index.html')
 
-# def image(request):
-#     file = request.FILES['image']
-#     filename = default_storage.save(file.name, file)
-#     file_url = default_storage.url(filename)
-#     print(filename , file_url)
-#     return render(request, 'sample/index.html')
-# Create your views here.
-
 def home(request):
     posts = Post.objects.all()
     context = {
         'posts': posts
     }
     return render(request, 'posts/home.html', context)
-
-# @login_required
-# def create(request):
-#     if request.method == 'POST':
-#         form = PostForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             post = form.save(commit=False)
-#             post.user = request.user
-#             post.save()
-#             post = form.save()
-#             return redirect('posts:detail', post.pk)
-#     else:
-#         form = PostForm()
-#         context = {
-#             'form': form
-#         }
-#         return render(request, 'posts/create.html', context)
 
 @login_required
 def create(request):
@@ -69,6 +44,47 @@ def create(request):
     else:
         form = PostForm()
     return render(request, 'posts/create.html', {'form': form})
+
+# @login_required
+# def insta_post(request):
+#     # 새로운 인스타 포스트를 생성하는 로직
+#     if request.method == 'POST':
+#         # 인스타 포스트 생성을 위한 폼 제출 처리
+#         form = PostForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             # 포스트를 저장합니다.
+#             post = form.save(commit=False)
+#             post.user = request.user
+#             post.save()
+#             return redirect('posts:home')
+#     else:
+#         # 인스타 포스트 생성을 위한 폼을 렌더링합니다.
+#         form = PostForm()
+#     return render(request, 'posts/insta_post.html', {'form': form})
+
+@login_required
+def insta_post(request):
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES)
+        if form.is_valid():
+            # 이미지를 S3에 업로드
+            if 'image' in request.FILES:
+                image = request.FILES['image']
+                filename = default_storage.save(image.name, image)
+                image_url = default_storage.url(filename)
+            else:
+                image_url = None
+
+            # 포스트를 저장합니다.
+            post = form.save(commit=False)
+            post.user = request.user
+            post.image = image_url  # 이미지 URL을 모델에 저장
+            post.save()
+            
+            return redirect('posts:home')
+    else:
+        form = PostForm()
+    return render(request, 'posts/insta_post.html', {'form': form})
 
 def update(request, pk):
     post = Post.objects.get(pk=pk)
