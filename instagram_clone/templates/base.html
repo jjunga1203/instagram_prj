@@ -15,32 +15,33 @@
         {% block navbar %}
         <div id="navbar-section" class="grid-item">
             <img src="{% static "images/posts/logoimg.png" %}" class="logo" alt="logo">
-            <div class="icon-text">
+            <a href="{% url 'posts:home' %}" class="icon-text"> <!-- Home -->
                 <img src="{% static "images/posts/home.png" %}" class="icon" alt="home">
                 <span class="text">Home</span>
-            </div>
-            <div class="icon-text">
+            </a>
+            <a href="{% url 'accounts:search' %}" class="icon-text"> <!-- Search -->
                 <img src="{% static "images/posts/search.png" %}" class="icon" alt="search">
                 <span class="text">Search</span>
-            </div>
-            <div class="icon-text">
+            </a>
+            <a href="#" class="icon-text"> <!-- Messages -->
                 <img src="{% static "images/posts/messages.png" %}" class="icon" alt="messages">
                 <span class="text">Messages</span>
-            </div>
-            <div class="icon-text">
+            </a>
+            <a href="#" class="icon-text"> <!-- Notifications -->
                 <img src="{% static "images/posts/notifications.png" %}" class="icon" alt="notifications">
                 <span class="text">Notifications</span>
-            </div>
-            <div class="icon-text">
+            </a>
+            <a href="{% url 'posts:create' %}" class="icon-text"> <!-- Create -->
                 <img src="{% static "images/posts/create.png" %}" class="icon" alt="create">
                 <span class="text">Create</span>
-            </div>
-            <div class="icon-text">
+            </a>
+            <a href="#" class="icon-text"> <!-- Profile -->
                 <img src="{% static "images/posts/avatar.png" %}" class="icon" alt="profile">
                 <span class="text">Profile</span>
-            </div>
+            </a>
         </div>
         {% endblock navbar %}
+
         {% block content %}
         {% endblock content %}
     </div>    
