@@ -1,10 +1,9 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block content %}
-<div id="main-section" class="grid-item">
-    <h2>사용자 검색</h2>
+    <h2>사용자 또는 태그 검색</h2>
     <form method="GET" action="{% url 'accounts:search' %}">
-        <input type="text" name="search_user" placeholder="사용자 ID, 별명, 또는 실명 입력">
+        <input type="text" name="search_keyword" placeholder="사용자 ID, 별명, 또는 실명 입력">
         <button type="submit">검색</button>
     </form>
 
@@ -17,8 +16,34 @@
             </li>
         {% endfor %}
     </ul>
+{% elif searched_posts %}
+    <h3>검색 결과:</h3>
+        <ul>
+            {% for post in searched_posts %}
+            <div class="post">
+                <div class="info">
+                    <div class="user">
+                        <div class="profile-pic"><img src="{% static 'images/posts/avatar.png' %}"></div>
+                        <p class="username">{{ post.user.username }}</p>
+                    </div>
+                </div>
+                <img src="{% static 'images/posts/home.png' %}" class="post-image" alt="">
+                <div class="post-content">
+                    <div class="reaction-wrapper">
+                        <img src="{% static 'images/posts/notifications.png' %}" class="icon" alt="">
+                    </div>
+                    <p class="likes">{{ post.like_users.count }} likes</p>
+                    <p class="description"><span>{{ post.user.username }}</span> {{ post.content }}</p>
+                    <p class="post-time">{{ post.created_at }}</p>
+                </div>
+                <div class="comment-wrapper">
+                    <input type="text" class="comment-box" placeholder="Add a comment">
+                    <button class="comment-btn">post</button>
+                </div>
+            </div>
+            {% endfor %}
+        </ul>
 {% else %}
     <p>검색 결과가 없습니다.</p>
 {% endif %}
-</div>
 {% endblock content %}

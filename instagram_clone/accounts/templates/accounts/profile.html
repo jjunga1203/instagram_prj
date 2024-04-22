@@ -15,6 +15,7 @@
     </form>
 {% endif %}
 
+<!--팔로잉/팔로워 보여주기-->
 <p>팔로잉 수: <a href="#" onclick="showFollowingList()">{{ following_count }}</a></p>
 <div id="following_popup" style="display: none;">
     <h3>팔로잉 목록</h3>
@@ -35,7 +36,7 @@
     </ul>
 </div>
 
-
+<!--기타 정보-->
 <p>자기소개 : {{ user.introduce }} </p>
 
 <p>

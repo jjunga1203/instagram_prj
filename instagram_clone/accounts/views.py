@@ -1,25 +1,20 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import CustomUserCreationForm # , CustomUserChangeForm
+from .forms import CustomUserCreationForm, CustomUserChangeForm
 from django.contrib.auth.forms import AuthenticationForm, UserChangeForm, UserCreationForm, PasswordChangeForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
+
 from .models import User
+from posts.models import Post
 from django.db.models import Q 
 
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth import logout as auth_logout
-from .forms import CustomUserCreationForm , CustomUserChangeForm
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import get_user_model
-from .models import User
 from django.http import JsonResponse
-
 
 from django.core.files.storage import default_storage
 from django.utils.datastructures import MultiValueDictKeyError
-
-from django.http import JsonResponse
 
 # Create your views here.
 
@@ -48,7 +43,7 @@ def index(request):
     }
 
     return render(request, 'accounts/index.html', context)
-            
+
 # 개인 프로파일 화면
 def profile(request, user_idx):
     # 사용자 정보 가져오기
@@ -68,27 +63,6 @@ def profile(request, user_idx):
     } 
     
     return render(request, 'accounts/profile.html', context) 
-
-def following_list(request):
-    user = request.user
-    following_users = user.followings.all()
-
-    context = {
-        'following_users': following_users,
-    }
-
-    return render(request, 'accounts/following_list.html', context)
-
-def follower_list(request):
-    user = request.user
-    follower_users = user.followers.all()
-    context = {
-        'follower_users': follower_users,
-    }
-
-    return render(request, 'accounts/follower_list.html', context)
-       
-
 
 
 # 사진 업로드
@@ -175,12 +149,29 @@ def login(request):
 
 def search(request):
     searched_users = None
-    search_user = request.GET.get('search_user')
-    if search_user:
-        searched_users = User.objects.filter(
-            Q(alias_name__icontains=search_user) | Q(real_name__icontains=search_user)| Q(username__icontains=search_user)
-        )
-    return render(request, 'accounts/search.html', {'searched_users': searched_users})
+    searched_posts = None
+    search_keyword = request.GET.get('search_keyword')
+    
+    if search_keyword:
+        if search_keyword.startswith('#'):  # 해시태그인 경우
+            searched_posts = Post.objects.filter(
+                content__icontains=search_keyword
+                ).order_by("-created_at")
+
+        else:  # 해시태그가 아닌 경우 유저를 검색
+            searched_users = User.objects.filter(
+                Q(alias_name__icontains=search_keyword) | 
+                Q(real_name__icontains=search_keyword) |
+                Q(username__icontains=search_keyword)
+            )
+            
+    context = {
+        'searched_users': searched_users, 
+        'searched_posts': searched_posts
+    } 
+    
+    return render(request, 'accounts/search.html', context)
+
 
 @login_required
 def follow(request, user_idx):

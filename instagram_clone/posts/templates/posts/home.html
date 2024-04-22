@@ -1,37 +1,37 @@
 {% extends 'base.html' %}
 {% block content %}
 {% load static %}
-<link rel="stylesheet" href="{% static 'css/posts/style.css' %}">
 <!--메인 섹션-->
-    <div class="stories">
-        <div class="stories-card">
-            <div class="profile-pic"><img src={% static "images/posts/avatar.png" %}></div>
-            <p class="username">user_name_1</p>
+<div class="stories">
+    <div class="stories-card">
+        <div class="profile-pic"><img src={% static "images/posts/avatar.png" %}></div>
+        <p class="username">user_name_1</p>
+    </div>
+</div>
+
+{% for post in posts %}
+<div class="post">
+    <div class="info">
+        <div class="user">
+            <div class="profile-pic"><img src="{% static 'images/posts/avatar.png' %}"></div>
+            <p class="username">{{ post.user.username }}</p>
         </div>
     </div>
-    <div class="posts">
-        <div class="post">
-            <div class="info">
-                <div class="user">
-                    <div class="profile-pic"><img src={% static "images/posts/avatar.png" %}></div>
-                    <p class="username">username</p>
-                </div>
-            </div>
-            <img src={% static "images/posts/home.png" %} class="post-image" alt="">
-            <div class="post-content">
-                <div class="reaction-wrapper">
-                    <img src={% static "images/posts/notifications.png" %} class="icon" alt="">
-                </div>
-                <p class="likes">1,012 likes</p>
-                <p class="description"><span>username </span> Lorem ipsum dolor sit amet consectetur, adipisicing elit. Pariatur tenetur veritatis placeat, molestiae impedit aut provident eum quo natus molestias?</p>
-                <p class="post-time">10 minutes ago</p>
-            </div>
-            <div class="comment-wrapper">
-                <input type="text" class="comment-box" placeholder="Add a comment">
-                <button class="comment-btn">post</button>
-            </div>
+    <img src="{% static 'images/posts/home.png' %}" class="post-image" alt="">
+    <div class="post-content">
+        <div class="reaction-wrapper">
+            <img src="{% static 'images/posts/notifications.png' %}" class="icon" alt="">
         </div>
+        <p class="likes">{{ post.like_users.count }} likes</p>
+        <p class="description"><span>{{ post.user.username }}</span> {{ post.content }}</p>
+        <p class="post-time">{{ post.created_at }}</p>
     </div>
+    <div class="comment-wrapper">
+        <input type="text" class="comment-box" placeholder="Add a comment">
+        <button class="comment-btn">post</button>
+    </div>
+</div>
+{% endfor %}
 
 {% endblock content %}
 {% block login %}{% endblock login %}
