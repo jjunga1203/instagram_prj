@@ -25,6 +25,8 @@ class User(AbstractUser):
     is_notify = models.BooleanField(default = True)
 
     profile_url = models.CharField(max_length=255, default='')
-
+    
+    followers = models.ManyToManyField("self")
+    following = models.ManyToManyField("self")
 
 
