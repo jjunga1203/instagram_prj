@@ -18,19 +18,59 @@ from django.http import JsonResponse
 from django.core.files.storage import default_storage
 from django.utils.datastructures import MultiValueDictKeyError
 
-# Create your views here.
+from django.http import JsonResponse
 
+# Create your views here.
+def change_pw(request, user_idx):
+    if not request.user.is_authenticated:
+        return redirect('accounts:login')
+    
+    my_p = User.objects.get(id=user_idx)
+    if request.POST['cur_pw'] == my_p.password:
+        my_p.password = request.POST['password1']
+        my_p.save()
+
+        update_session_auth_hash(request, my_p)
+        return redirect('accounts:profile', request.user.id)
+    else:
+        return redirect('accounts:profile', request.user.id)
+
+
+def index(request):
+    if not request.user.is_authenticated:
+        return redirect('accounts:login')
+
+    user = User.objects.get(pk=request.user.id)
+    context = {
+        'user':user,
+    }
+
+    return render(request, 'accounts/index.html', context)
+            
 # 개인 프로파일 화면
 def profile(request, user_idx):
     # print(username)
     if not request.user.is_authenticated:
         return redirect('accounts:login')
-    user = User.objects.get(pk=user_idx)
-    context = {
-        'user':user,
-    }
+    # user = CustomUserChangeForm(request.user, request.POST)
 
-    return render(request, 'accounts/profile.html', context)
+    if request.method == 'post':
+        user = User.objects.get(pk=user_idx)
+        context = {
+            'user':user,
+        }
+
+        return render(request, 'accounts/profile.html', context)
+    else:
+        user = User.objects.get(pk=user_idx)
+        # user = CustomUserChangeForm(instance=request.user)
+        # print(user.id)
+        context = {
+            'user':user,
+        }
+
+        return render(request, 'accounts/profile.html', context)        
+
 
 
 # 사진 업로드
@@ -44,23 +84,46 @@ def upload_img(request, user_idx):
         
         filename = default_storage.save(file.name, file)
         file_url = default_storage.url(filename)
- 
+
         print(filename, file_url)
         form.profile_url = file_url
+        form.profile_img_name = filename
         form.save()
     else:
         print("No image file uploaded.")
     
+    # context = {
+    #     'profile_url': file_url,
+    #     'profile_img_name' : filename,
+    # }
+    # return JsonResponse(context)
+
     return redirect('accounts:profile', request.user.id)
 
-       
+def delete_img(request, user_idx):
+    form = get_user_model().objects.get(pk=user_idx)
+    default_storage.delete(form.profile_img_name)
+
+    form.profile_url = ''
+    form.profile_img_name = ''
+    form.save()
+    print('profile_img delete...')
+
+    # 팔로우 성공을 JSON 형태로 반환
+    context = {
+        'profile_url': form.profile_url,
+    }
+    
+    return redirect('accounts:profile', request.user.id)
+
+    # return JsonResponse(context)
+
 def signup(request):
     # 이미 로그인한 경우, 회원가입 로직 실행 막기
     if request.user.is_authenticated:
         return redirect('accounts:profile', request.user.id)
     
     if request.method == 'POST':
-        # form = UserCreationForm(request.POST)
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             form.save()

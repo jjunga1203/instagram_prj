@@ -25,6 +25,7 @@ class User(AbstractUser):
     is_notify = models.BooleanField(default = True)
 
     profile_url = models.TextField(default='')
+    profile_img_name = models.CharField(max_length=100, default='')
 
 
 

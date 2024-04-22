@@ -29,7 +29,10 @@ body {
     background-color: #555;
 }
 
-
+.warning-message {
+    color: red;
+    font-size: 7pt;
+  }
 
 /* 최희정 수정 */
 .modal_overlay {
@@ -47,7 +50,19 @@ body {
     -webkit-backdrop-filter: blur(1.5px);
 }
 
-.modal_window {
+.modal_profile_window {
+    background: white;
+    backdrop-filter: blur(13.5px);
+    -webkit-backdrop-filter: blur(13.5px);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    width: 400px;
+    height: 500px;
+    position: relative;
+    padding: 10px;
+}
+
+.modal_pw_window {
     background: white;
     backdrop-filter: blur(13.5px);
     -webkit-backdrop-filter: blur(13.5px);
