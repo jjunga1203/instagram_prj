@@ -9,29 +9,30 @@
     </div>
 </div>
 
-{% for post in posts %}
-<div class="post">
-    <div class="info">
-        <div class="user">
-            <div class="profile-pic"><img src="{% static 'images/posts/avatar.png' %}"></div>
-            <p class="username">{{ post.user.username }}</p>
+<div class="posts">
+    {% for post in posts %}
+    <div class="post">
+        <div class="info">
+            <div class="user">
+                <div class="profile-pic"><img src="{% static 'images/posts/avatar.png' %}"></div>
+                <p class="username">{{ post.user.username }}</p>
+            </div>
+        </div>
+        <img src="{% static 'images/posts/home.png' %}" class="post-image" alt="">
+        <div class="post-content">
+            <div class="reaction-wrapper">
+                <img src="{% static 'images/posts/notifications.png' %}" class="icon" alt="">
+            </div>
+            <p class="likes">{{ post.like_users.count }} likes</p>
+            <p class="description"><span>{{ post.user.username }}</span> {{ post.content }}</p>
+            <p class="post-time">{{ post.created_at }}</p>
+        </div>
+        <div class="comment-wrapper">
+            <input type="text" class="comment-box" placeholder="Add a comment">
+            <button class="comment-btn">post</button>
         </div>
     </div>
-    <img src="{% static 'images/posts/home.png' %}" class="post-image" alt="">
-    <div class="post-content">
-        <div class="reaction-wrapper">
-            <img src="{% static 'images/posts/notifications.png' %}" class="icon" alt="">
-        </div>
-        <p class="likes">{{ post.like_users.count }} likes</p>
-        <p class="description"><span>{{ post.user.username }}</span> {{ post.content }}</p>
-        <p class="post-time">{{ post.created_at }}</p>
-    </div>
-    <div class="comment-wrapper">
-        <input type="text" class="comment-box" placeholder="Add a comment">
-        <button class="comment-btn">post</button>
-    </div>
+    {% endfor %}
 </div>
-{% endfor %}
-
 {% endblock content %}
 {% block login %}{% endblock login %}
