@@ -2,10 +2,18 @@
 
 {% block content %}
 <h3> {{ request.user }} 프로필 페이지</h3>
-
+{% if request.user !=user %}
+    <form action="{% url "accounts:follow" user_id=user.id %}" method="POST">
+        {% csrf_token %}
+        {% if request.user in user.followers.all %}
+            <input type="submit" value="UnFollow">
+        {% else %}
+            <input type="submit" value="Follow">
+        {% endif %}
+    </form>
+{% endif %}
 {% endblock content %}
 
 {% block script %}
 
 {% endblock script %}
-

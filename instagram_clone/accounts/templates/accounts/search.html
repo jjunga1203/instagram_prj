@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div id="main-section" class="grid-item">
+    <h2>사용자 검색</h2>
+    <form method="GET" action="{% url 'accounts:search' %}">
+        <input type="text" name="user_id" placeholder="사용자 ID, 별명, 또는 실명 입력">
+        <button type="submit">검색</button>
+    </form>
+
+{% if searched_users %}
+    <h3>검색 결과:</h3>
+    <ul>
+        {% for user in searched_users %}
+            <li>
+                <a href="{% url 'accounts:profile' username=user.username %}">{{ user.alias_name }} ({{ user.real_name }})</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>검색 결과가 없습니다.</p>
+{% endif %}
+</div>
+{% endblock content %}
