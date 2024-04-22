@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% block navbar %}{% endblock navbar %}
 
 {% block content %}
 <form action="{% url "accounts:signup" %}" method='POST'>
@@ -11,4 +12,3 @@
 {% block script %}
 
 {% endblock script %}
-
