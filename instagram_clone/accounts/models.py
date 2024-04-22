@@ -19,8 +19,6 @@ class User(AbstractUser):
     introduce = models.TextField(max_length=100)
     gender = models.CharField(max_length=1, choices=gender_choices, default='O')
     is_notify = models.BooleanField(default = True)
-    profile_url = models.CharField(max_length=255, default='')
-    
     followings = models.ManyToManyField("self", symmetrical=False, related_name="followers")
     profile_url = models.TextField(default='')
     profile_img_name = models.CharField(max_length=100, default='')

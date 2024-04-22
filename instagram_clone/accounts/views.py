@@ -51,27 +51,43 @@ def index(request):
             
 # 개인 프로파일 화면
 def profile(request, user_idx):
-    # print(username)
+    # 사용자 정보 가져오기
+    user = User.objects.get(pk=user_idx)
+    # 팔로잉 및 팔로워 수 계산
+    following_count = user.followings.count() 
+    follower_count = user.followers.count()   
+
+    # 사용자가 로그인되어 있는지 확인
     if not request.user.is_authenticated:
         return redirect('accounts:login')
-    # user = CustomUserChangeForm(request.user, request.POST)
 
-    if request.method == 'POST':
-        user = User.objects.get(pk=user_idx)
-        context = {
-            'user':user,
-        }
+    context = {
+        'user': user,
+        'following_count': following_count,
+        'follower_count': follower_count,
+    } 
+    
+    return render(request, 'accounts/profile.html', context) 
 
-        return render(request, 'accounts/profile.html', context)
-    else:
-        user = User.objects.get(pk=user_idx)
-        # user = CustomUserChangeForm(instance=request.user)
-        # print(user.id)
-        context = {
-            'user':user,
-        }
+def following_list(request):
+    user = request.user
+    following_users = user.followings.all()
 
-        return render(request, 'accounts/profile.html', context)        
+    context = {
+        'following_users': following_users,
+    }
+
+    return render(request, 'accounts/following_list.html', context)
+
+def follower_list(request):
+    user = request.user
+    follower_users = user.followers.all()
+    context = {
+        'follower_users': follower_users,
+    }
+
+    return render(request, 'accounts/follower_list.html', context)
+       
 
 
 
@@ -166,15 +182,17 @@ def search(request):
         )
     return render(request, 'accounts/search.html', {'searched_users': searched_users})
 
-def follow(request, user_id):
-    user = get_user_model().objects.get(pk=user_id)
-    if request.user == user:
-        return redirect('accounts:profile', user.username)
-    if request.user in user.followers.all():
-        user.followers.remove(request.user)
+@login_required
+def follow(request, user_idx):
+    user = request.user
+    followed_user = User.objects.get(pk=user_idx)
+    
+    if user in followed_user.followers.all():
+        followed_user.followers.remove(user)
     else:
-        user.follower.add(request.user)
-    return redirect('accounts:profile', user.username)
+        followed_user.followers.add(user)
+        
+    return redirect('accounts:profile', user_idx=user_idx)
 
 # logout은 반드시 로그인 상태가 필수조건
 @login_required
