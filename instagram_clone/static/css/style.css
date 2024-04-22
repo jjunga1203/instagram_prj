@@ -104,3 +104,72 @@
     width: 100%;
     height: auto;
 }
+
+#sidebar nav a:hover {
+    background-color: #555;
+}
+
+.warning-message {
+    color: red;
+    font-size: 7pt;
+  }
+
+/* 최희정 수정 */
+.modal_overlay {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(1.5px);
+    -webkit-backdrop-filter: blur(1.5px);
+}
+
+.modal_profile_window {
+    background: white;
+    backdrop-filter: blur(13.5px);
+    -webkit-backdrop-filter: blur(13.5px);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    width: 400px;
+    height: 500px;
+    position: relative;
+    padding: 10px;
+}
+
+.modal_pw_window {
+    background: white;
+    backdrop-filter: blur(13.5px);
+    -webkit-backdrop-filter: blur(13.5px);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    width: 400px;
+    height: 500px;
+    position: relative;
+    padding: 10px;
+}
+
+.modal_title{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.modal_content{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-size: 16px;
+}
+
+.modal_title_side{
+    flex: 0 0 40px;
+    text-align: center;
+    }

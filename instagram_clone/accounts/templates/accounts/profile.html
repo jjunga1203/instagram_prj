@@ -2,6 +2,7 @@
 
 {% block content %}
 <h3> {{ request.user }} 프로필 페이지</h3>
+<<<<<<< HEAD
 {% if request.user !=user %}
     <form action="{% url "accounts:follow" user_id=user.id %}" method="POST">
         {% csrf_token %}
@@ -12,8 +13,94 @@
         {% endif %}
     </form>
 {% endif %}
+=======
+
+<p>자기소개 : {{ user.introduce }} </p>
+
+<p>
+{% if user.gender == 'F' %}
+성별 : 여자 
+{% elif user.gentder == 'M' %}
+성별 : 남자 
+{% else %}
+성별 : 선택안함
+{% endif %}
+</p>
+{% if user.profile_url %}
+<img src="{{user.profile_url}}" alt="프로필 사진" height=100> 
+{% else %}
+{% load static %}
+<img src="{% static 'images/none_img.jpg' %}" alt="프로필 사진" height=100> 
+프로필 사진을 등록하세요.
+{% endif %}
+<br>
+<!-- add_box id 속성 추가 -->
+<span id="add_feed" class="material-icons-outlined">사진 변경</span>
+<br>
+
+<!-- model id 속성 추가 -->
+<!-- create feed -->
+<div id="modal_add_feed" class="modal_overlay" style='display:none'> 
+    <div class="modal_profile_window">
+        <div class="modal_title">
+        <div> 프로필 사진 바꾸기 </div>
+        <div class="modal_content">
+            <div> 사진 업로드 </div>
+                <form method="post" action="{% url "accounts:upload_img" user.id %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="file" name="profile_img">
+                <button type="submit" value='사진올리기'>Upload</button>
+                </form>
+
+            <form class='delete_img' method='post' action="{% url "accounts:delete_img" user.id %}">
+                {% csrf_token %}
+                <button type="submit" value='사진삭제'>현재 사진 삭제</button>
+            </form>
+
+            <span id="close_modal" class="material-icons-outlined">
+                취소
+            </span>
+        </div>
+        </div>
+    </div>
+</div>
+
+{% comment %} <span id="add_feed_pw" class="material-icons-outlined">비밀번호 변경</span> {% endcomment %}
+<br>
+
+<div id="modal_add_feed_pw" class="modal_overlay" style='display:none'> 
+    <div class="modal_pw_window">
+        <form class='change_pw' method='post' action="{% url "accounts:change_pw" user.id %}">
+            {% csrf_token %}
+            <div>
+                <p>{{user.alias_name }}  · Instagram <br>비밀번호 변경<br>
+                <span style='font-size:10px'>
+                누군가 액세스 권한을 얻으려고 시도 중인 경우 계정을 보호하기 위해 이 세션을 제외한 모든 세션에서 로그아웃됩니다.
+                비밀번호는 최소 6자 이상이어야 하며 숫자, 영문, 특수 문자(!$@%)의 조합을 포함해야 합니다.
+                </span></p>
+
+                <input type="text" placeholder='Current Enter the Password' maxlength="30" size="30">
+                <span id='cur_pw'></span><br>
+                <input id='password1' type="password" placeholder='Enter the Password' maxlength="30" size="30">
+                <span id='warning1' class='warning-message'></span><br>
+                <input id='password2' type="password" placeholder='Again Enter the Password' maxlength="30" size="30">
+                <span id='warning2' class='warning-message'></span><br>
+                
+                <button type="submit" value='사진삭제'>비밀번호 변경</button>
+                <span id="close_pw_modal" class="material-icons-outlined">
+                    취소
+                </span>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+>>>>>>> origin/jjunga
 {% endblock content %}
 
 {% block script %}
+{% load static %}
+<script src="{% static 'js/accounts/profile.js' %}"></script>
 
 {% endblock script %}
