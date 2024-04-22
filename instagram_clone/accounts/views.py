@@ -32,9 +32,9 @@ def signup(request):
             return redirect('accounts:login')
     else:
         form = CustomUserCreationForm()
-    context = {
-        'form':form
-    }
+        context = {
+            'form':form
+        }
     return render(request, 'accounts/signup.html', context)
 
 def login(request):
@@ -49,7 +49,7 @@ def login(request):
         if form.is_valid():
             auth_login(request, form.get_user())
             print(request.user.id)
-            return redirect('accounts:profile', request.user.id)
+            return redirect('accountscd:profile', request.user.id)
 
     form = AuthenticationForm()
     context = {
