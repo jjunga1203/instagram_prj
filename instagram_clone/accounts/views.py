@@ -159,11 +159,10 @@ def login(request):
 
 def search(request):
     searched_users = None
-    user_id = request.GET.get('user_id')
-    if user_id:
-        # Search for users whose alias_name or real_name matches the user_id
+    search_user = request.GET.get('search_user')
+    if search_user:
         searched_users = User.objects.filter(
-            Q(alias_name__icontains=user_id) | Q(real_name__icontains=user_id)
+            Q(alias_name__icontains=search_user) | Q(real_name__icontains=search_user)| Q(username__icontains=search_user)
         )
     return render(request, 'accounts/search.html', {'searched_users': searched_users})
 

@@ -4,7 +4,7 @@
 <div id="main-section" class="grid-item">
     <h2>사용자 검색</h2>
     <form method="GET" action="{% url 'accounts:search' %}">
-        <input type="text" name="user_id" placeholder="사용자 ID, 별명, 또는 실명 입력">
+        <input type="text" name="search_user" placeholder="사용자 ID, 별명, 또는 실명 입력">
         <button type="submit">검색</button>
     </form>
 
@@ -13,7 +13,7 @@
     <ul>
         {% for user in searched_users %}
             <li>
-                <a href="{% url 'accounts:profile' username=user.username %}">{{ user.alias_name }} ({{ user.real_name }})</a>
+                <a href="{% url 'accounts:profile' user_idx=user.id %}">아이디: {{user.username}} 사용자명: {{ user.alias_name }} 이름: {{ user.real_name }}</a>
             </li>
         {% endfor %}
     </ul>
