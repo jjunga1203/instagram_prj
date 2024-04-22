@@ -45,22 +45,23 @@
             </a>
         </div>
         {% endblock navbar %}
-
+        {% block content %}
+        {% endblock content %}
     </div>    
-
- 
+    
+    {% block login %}
     {% if user.is_authenticated %}
     {% comment %} <input type="button" onclick="location.href='{% url "accounts:profile" user.id%}'" value='PROFILE' class="btn btn-outline-secondary"/>
-         {% endcomment %}
+        {% endcomment %}
     <input type="button" onclick="location.href='{% url "accounts:logout" %}'" value='LOGOUT' class="btn btn-outline-secondary"/>
     {% else %}
         <input type="button" onclick="location.href='{% url "accounts:login" %}'" value='LOGIN' class="btn btn-outline-secondary"/>
         <input type="button" onclick="location.href='{% url "accounts:signup" %}'" value='SIGNUP' class="btn btn-outline-secondary"/>
     {% endif %}
+    {% endblock login %}
+    {% block logincontent %}
+    {% endblock logincontent %}
 
-    {% block content %}
-    {% endblock content %}
-    
     {% block script %}
     {% endblock script %}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
