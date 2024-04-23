@@ -1,18 +1,12 @@
-{% extends "base.html" %}
-{% block navbar %}{% endblock navbar %}
-
-{% block logincontent %}
+{% extends "accounts/base.html" %}
+{% block content %}
 <form action="{% url "accounts:signup" %}" method='POST'>
     {% csrf_token %}
     {{ form.as_p }}
 
-
     <input type="submit" value='회원가입하기'>
 </form>
-
-
-{% endblock logincontent %}
+{% endblock content %}
 
 {% block script %}
-
 {% endblock script %}
