@@ -16,11 +16,17 @@ from django.http import JsonResponse
 from django.core.files.storage import default_storage
 from django.utils.datastructures import MultiValueDictKeyError
 
+from django.contrib.auth.hashers import check_password
+
 # Create your views here.
 def change_pw(request, user_idx):
     if not request.user.is_authenticated:
         return redirect('accounts:login')
     
+    # fcuser = Fcuser.objects.get(username=username)
+    # if not check_password(password, Fcuser.username):
+    #     self.add_error('password', '비밀번호가 틀렸습니다.')
+
     my_p = PasswordChangeForm(request.user,request.POST)
     print(request.POST['password'])
     if request.POST['password'] == my_p.password:
@@ -33,14 +39,25 @@ def change_pw(request, user_idx):
         return redirect('accounts:profile', request.user.id)
 
 
-def index(request):
+def index(request, user_idx):
     if not request.user.is_authenticated:
         return redirect('accounts:login')
 
-    user = User.objects.get(pk=request.user.id)
+    user = User.objects.get(pk=user_idx)
+    
+    # 팔로잉 및 팔로워 수 계산
+    following_count = user.followings.count() 
+    follower_count = user.followers.count()   
+
+    # 사용자가 로그인되어 있는지 확인
+    if not request.user.is_authenticated:
+        return redirect('accounts:login')
+
     context = {
-        'user':user,
-    }
+        'user': user,
+        'following_count': following_count,
+        'follower_count': follower_count,
+    } 
 
     return render(request, 'accounts/index.html', context)
 
@@ -120,10 +137,17 @@ def signup(request):
     
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
+        print(request)
+
         if form.is_valid():
             form.save()
+ 
             return redirect('accounts:login')
+        else:
+            print(form.errors)
+            return redirect('accounts:signup')
     else:
+        print('3')
         form = CustomUserCreationForm()
         context = {
             'form':form

@@ -1,25 +1,40 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Story
+from .forms import StoryForm
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.http import FileResponse
 from django.conf import settings
 from django.core.files.storage import default_storage
 
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .forms import StoryForm
+
 @login_required
 def create(request):
-    pass
+    print(request.method)
+    if request.method == 'POST':
+        form = StoryForm(request.POST, request.FILES)
+        print(form.is_valid())
+        if form.is_valid():
+            story = form.save(commit=False)
+            story.user = request.user 
+            story.save()
+            
+            # 파일을 S3에 업로드
+            file = request.FILES['image']
+            filename = default_storage.save(file.name, file)
+            file_url = default_storage.url(filename)
+            print(filename, file_url)
+            
+            return redirect('stories:detail', pk=story.pk)  # 상세 페이지로 리디렉션
+        else:
+            print(form.errors)
+    else:
+        form = StoryForm()
+    return render(request, 'stories/create.html', {'form': form})
 
-
-@login_required
-def get_story_image(request, image_name):
-    # AWS S3 버킷에 저장된 이미지의 URL 가져오기
-    image_url = default_storage.url(image_name)
-    # 이미지를 클라이언트에 반환
-    return redirect(image_url)
-
-@login_required
-def detail(request, story_id):
-    # 스토리 객체 가져오기
-    story = get_object_or_404(Story, id=story_id)
-    # 스토리의 자세한 내용을 보여주는 페이지 렌더링
-    return render(request, 'stories/story_detail.html', {'story': story})
+def detail(request, pk):
+    story = get_object_or_404(Story, pk=pk)
+    return render(request, 'stories/detail.html', {'story': story})
