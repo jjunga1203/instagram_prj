@@ -112,7 +112,15 @@
 .warning-message {
     color: red;
     font-size: 7pt;
-  }
+}
+
+.placeholder-message {
+    color: gray;
+    font-size: 12px;
+    width:250px;
+    /* font-weight: 400; */
+    opacity: 1;
+}
 
 /* 최희정 수정 */
 .modal_overlay {
@@ -173,3 +181,19 @@
     flex: 0 0 40px;
     text-align: center;
     }
+
+
+.signup_body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #fafafa;
+}
+.signup_container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
