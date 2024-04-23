@@ -21,12 +21,14 @@ from django.utils.datastructures import MultiValueDictKeyError
 from django.http import JsonResponse
 
 # Create your views here.
+# 비밀번호 변경 로직
 def change_pw(request, user_idx):
     if not request.user.is_authenticated:
         return redirect('accounts:login')
     
-    my_p = User.objects.get(id=user_idx)
-    if request.POST['cur_pw'] == my_p.password:
+    my_p = PasswordChangeForm(request.user,request.POST)
+    print(request.POST['password'])
+    if request.POST['password'] == my_p.password:
         my_p.password = request.POST['password1']
         my_p.save()
 
