@@ -3,10 +3,6 @@ from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 class User(AbstractUser):
-
-    # 프로젝트를 진행하다 이후에 이런것들을 생성함.
-    # followings = models.ManyToManyField('self', symmetrical=False, related_name='followers')
-
     gender_choices = (
         ('M', '남성'),
         ('F', '여성'),
@@ -23,9 +19,6 @@ class User(AbstractUser):
     introduce = models.TextField(max_length=100)
     gender = models.CharField(max_length=1, choices=gender_choices, default='O')
     is_notify = models.BooleanField(default = True)
-
+    followings = models.ManyToManyField("self", symmetrical=False, related_name="followers")
     profile_url = models.TextField(default='')
     profile_img_name = models.CharField(max_length=100, default='')
-
-
-

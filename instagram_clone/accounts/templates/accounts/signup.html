@@ -1,6 +1,7 @@
 {% extends "base.html" %}
+{% block navbar %}{% endblock navbar %}
 
-{% block content %}
+{% block logincontent %}
 <form action="{% url "accounts:signup" %}" method='POST'>
     {% csrf_token %}
     {{ form.as_p }}
@@ -10,9 +11,8 @@
 </form>
 
 
-{% endblock content %}
+{% endblock logincontent %}
 
 {% block script %}
 
 {% endblock script %}
-

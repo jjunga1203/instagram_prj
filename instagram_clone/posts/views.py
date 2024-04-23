@@ -1,9 +1,23 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import Post, Comment
+from accounts.models import User
 from .forms import PostForm, CommentForm
 from django.contrib.auth.decorators import login_required
 from django.core.files.storage import default_storage
 from django.utils.datastructures import MultiValueDictKeyError
+from django.db.models import Q
+
+def home(request):
+    user = get_object_or_404(User, pk=request.user.id)
+    followings = user.followings.all()
+    posts = Post.objects.filter(
+        Q(user__in=followings) | Q(user=user)
+    ).order_by("-created_at")
+    
+    context = {
+        'posts': posts
+    }
+    return render(request, 'posts/home.html', context)
 
 @login_required
 def image(request):
@@ -22,13 +36,6 @@ def image(request):
 #     print(filename , file_url)
 #     return render(request, 'sample/index.html')
 # Create your views here.
-
-def home(request):
-    posts = Post.objects.all()
-    context = {
-        'posts': posts
-    }
-    return render(request, 'posts/home.html', context)
 
 @login_required
 def create(request):

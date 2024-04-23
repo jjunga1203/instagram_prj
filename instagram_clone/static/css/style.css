@@ -1,30 +1,110 @@
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
+.grid-container {
+    display: grid;
+    grid-template-columns: 1fr 5fr;
+    grid-gap: 20px;
+    height: 100vh;
 }
-#sidebar {
-    position: fixed;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 80px; /* 메뉴 바의 너비 조정 */
-    background-color: #333;
-    padding-top: 20px;
-    color: #fff;
+
+.grid-item {
+    padding: 20px;
+    border: 0;
 }
-#sidebar nav {
+
+#navbar-section {
     display: flex;
-    flex-direction: column; /* 세로로 나열되도록 설정 */
-    align-items: center; /* 가운데 정렬 */
+    flex-direction: column;
+    border-right: 1px solid #ccc;
 }
-#sidebar nav a {
-    color: #fff;
-    text-decoration: none;
+
+.logo {
+    width: 22px; 
+    height: auto;
+    margin-top: 20px;
+    margin-bottom: 55px;
 }
-#sidebar nav img {
-    width: 40px; /* 이미지 크기 조정 */
-    margin-bottom: 10px; /* 이미지 사이 여백 조정 */
+
+.icon-text {
+    display: flex; 
+    align-items: center;
+    margin-bottom: 30px;
 }
+
+.icon {
+    width: 22px;
+    height: auto;
+    margin-right: 10px;
+}
+#main-section {
+    display: flex;
+    flex-direction: column;
+    padding: 20px 100px;
+}
+
+.stories {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto; /* Enable horizontal scrolling if needed */
+    margin-bottom: 20px; /* Add margin between stories and posts */
+}
+
+.stories-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center align items horizontally */
+    text-align: center; /* Center align text */
+    margin-right: 15px; /* Add space between stories cards */
+}
+
+.posts {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.post {
+    background: #fff;
+    border-bottom: 1px solid #dfdfdf;
+    width: 500px;
+    margin-bottom: 20px; /* Add margin between posts */
+    padding-bottom: 20px;
+}
+
+.profile-card {
+    width: 100%;
+    background: #fff;
+    border: 1px solid #dfdfdf;
+    padding: 20px;
+    text-align: center;
+}
+
+.profile-pic img {
+    width: 60px; /* Adjust profile picture size */
+    height: auto;
+    border-radius: 50%; /* Make profile picture circular */
+    object-fit: cover; /* Maintain aspect ratio */
+    margin-bottom: 10px; /* Add space below profile picture */
+}
+
+.user {
+    display: inline-block; /* Set display to inline-block */
+}
+
+.profile-pic {
+    display: inline-block; /* Set display to inline-block */
+    vertical-align: middle; /* Align vertically in the middle */
+    margin-right: 10px; /* Add some space between profile-pic and username */
+}
+
+.username {
+    display: inline-block; /* Set display to inline-block */
+    vertical-align: middle; /* Align vertically in the middle */
+}
+
+.post-image {
+    width: 100%;
+    height: auto;
+}
+
 #sidebar nav a:hover {
     background-color: #555;
 }
@@ -93,4 +173,3 @@ body {
     flex: 0 0 40px;
     text-align: center;
     }
-/* 최희정 수정 */
