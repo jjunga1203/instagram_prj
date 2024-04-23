@@ -17,13 +17,13 @@ from django.core.files.storage import default_storage
 from django.utils.datastructures import MultiValueDictKeyError
 
 # Create your views here.
-
 def change_pw(request, user_idx):
     if not request.user.is_authenticated:
         return redirect('accounts:login')
     
-    my_p = User.objects.get(id=user_idx)
-    if request.POST['cur_pw'] == my_p.password:
+    my_p = PasswordChangeForm(request.user,request.POST)
+    print(request.POST['password'])
+    if request.POST['password'] == my_p.password:
         my_p.password = request.POST['password1']
         my_p.save()
 

@@ -47,7 +47,7 @@ buttonAddFeed.addEventListener("click", e => {
     document.body.style.overflowY = "hidden"; // 스크롤 없애기
 });
 
-// 패스워드 변경 모달 창 띄우기
+// // 패스워드 변경 모달 창 띄우기
 // const modal2 = document.getElementById("modal_add_feed_pw");
 // const buttonChangePW = document.getElementById("add_feed_pw");
 // buttonChangePW.addEventListener("click", e => {
