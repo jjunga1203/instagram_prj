@@ -43,14 +43,22 @@ def create(request):
         form = PostForm()
     return render(request, 'posts/create.html', {'form': form})
 
+@login_required
 def update(request, pk):
     post = Post.objects.get(pk=pk)
     if request.user != post.user:
         return redirect('posts:home')
     
     if request.method == 'POST':
-        form = PostForm(request.POST, instance=post)
+        form = PostForm(request.POST, request.FILES, instance=post)  # request.FILES 추가
         if form.is_valid():
+            # 이미지를 S3에 업로드
+            if 'image' in request.FILES:
+                image = request.FILES['image']
+                filename = default_storage.save(image.name, image)
+                image_url = default_storage.url(filename)
+                post.image = image_url  # 이미지 URL을 모델에 저장
+
             form.save()
             return redirect('posts:detail', post.pk)
             
