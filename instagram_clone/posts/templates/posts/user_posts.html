@@ -3,10 +3,10 @@
 {% block content %}
     <style>
         .post-image {
-            width: calc(196px - 2px); /* 이미지 너비 설정 */
-            height: calc(196px - 2px); /* 이미지 높이 설정 */
-            margin-right: 4px; /* 이미지 사이 간격 설정 */
-            margin-bottom: 4px; /* 이미지 아래 간격 설정 */
+            width: calc(260px - 2px); /* 이미지 너비 설정 */
+            height: calc(260px - 2px); /* 이미지 높이 설정 */
+            margin-right: 1px; /* 이미지 사이 간격 설정 */
+            margin-bottom: 5px; /* 이미지 아래 간격 설정 */
             display: inline-block; /* 이미지를 인라인 요소로 표시하여 나란히 정렬 */
         }
 
@@ -31,7 +31,7 @@
             -webkit-backdrop-filter: blur(13.5px);
             border-radius: 10px;
             border: 1px solid rgba(255, 255, 255, 0.18);
-            width: 800px;
+            width: 1000px;
             height: 600px;
             position: relative;
             padding: 10px;
@@ -40,6 +40,37 @@
         .img_upload_space img {
             max-width: 100%;
             max-height: 100%;
+        }
+
+        .modal_content {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        .image_section {
+            width: 50%;
+            height: 100%;
+        }
+
+        .image_section img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .info_section {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+            overflow: auto; /* 내용이 넘칠 경우 스크롤 표시 */
+        }
+
+        .modal_close {
+            cursor: pointer;
+            display: flex;
+            justify-content: flex-end;
         }
     </style>
 
@@ -52,9 +83,11 @@
             {% endif %}
             <div class="post-image">
                 {% if post.image %}
-                    <a href="#" class="image-modal-trigger" data-image-url="{{ post.image }}">
-                        <img src="{{ post.image }}" alt="Post Image" style="width: 196px; height: 196px;">
-                    </a>
+                    {% with user_name=post.user.username content=post.content %}
+                        <a href="#" class="image-modal-trigger" data-image-url="{{ post.image }}" data-username="{{ user_name }}" data-content="{{ content }}" data-post-pk="{{ post.pk }}">
+                            <img src="{{ post.image }}" alt="Post Image" style="width: 260px; height: 260px;">
+                        </a>
+                    {% endwith %}
                 {% endif %}
             </div>
         {% endfor %}
@@ -63,20 +96,18 @@
     <!-- 모달 -->
     <div id="first_modal" class="modal_overlay">
         <div class="modal_window">
-            <div style="display: flex; flex-direction: row; justify-content: space-between">
-                <div style="width: 40px; background: gray"></div>
-                <div>이미지 상세보기</div>
-                <div style="width: 40px; background: gray"><span class="modal_close material-icons-outlined">close</span></div>
-            </div>
             <div class="modal_content">
-                <div class="image_section" style="width: 66.6%; float: left;"></div>
-                <div class="info_section" style="width: 33.3%; float: left; padding-left: 10px;">
-                    <p id="user_name"></p>
-                    <hr>
-                    <p id="post_content"></p>
-                    <a href="#" id="edit_link">수정하기</a>
+                <div class="image_section">
+                    <!-- 이미지 표시 공간 -->
+                    <img id="modal_image">
                 </div>
-                <div style="clear: both;"></div>
+                <div class="info_section">
+                    <span class="modal_close material-icons-outlined">close</span>
+                    <p id="user_name"></p> <!-- 유저 이름 표시 -->
+                    <hr>
+                    <p id="post_content"></p> <!-- 포스트 내용 표시 -->
+                    
+                </div>
             </div>
         </div>
     </div>
@@ -87,22 +118,18 @@
             $(".image-modal-trigger").click(function (e) {
                 e.preventDefault(); // 기본 동작 중단
                 var imageUrl = $(this).data('image-url'); // 클릭한 이미지의 URL 가져오기
-                var userName = $(this).data('user-name'); // 유저 이름 가져오기
-                var postContent = $(this).data('post-content'); // 글 내용 가져오기
-
+                var userName = $(this).data('username'); // 클릭한 이미지의 유저 이름 가져오기
+                var postContent = $(this).data('content'); // 클릭한 이미지의 포스트 내용 가져오기
+        
                 // 모달에 이미지, 유저 이름, 글 내용 표시
-                $(".image_section").html('<img src="' + imageUrl + '" style="max-width: 100%; max-height: 100%;">');
+                $("#modal_image").attr("src", imageUrl);
                 $("#user_name").text(userName);
                 $("#post_content").text(postContent);
-
-                // 수정하기 링크 설정
-                var editLink = "/posts/update/" + $(this).data('post-id') + "/";
-                $("#edit_link").attr("href", editLink);
-
+        
                 // 모달 표시
                 $("#first_modal").css({display: 'flex'});
             });
-
+        
             $(".modal_close").click(function () {
                 $('#first_modal').css({display: 'none'});
             });
