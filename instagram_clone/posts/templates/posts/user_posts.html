@@ -1,76 +1,111 @@
+{% extends 'base.html' %}
+
 {% block content %}
     <style>
         .post-image {
-            width: calc(196px - 4px); /* 이미지 너비 설정 */
-            height: calc(196px - 4px); /* 이미지 높이 설정 */
+            width: calc(196px - 2px); /* 이미지 너비 설정 */
+            height: calc(196px - 2px); /* 이미지 높이 설정 */
             margin-right: 4px; /* 이미지 사이 간격 설정 */
             margin-bottom: 4px; /* 이미지 아래 간격 설정 */
             display: inline-block; /* 이미지를 인라인 요소로 표시하여 나란히 정렬 */
+        }
+
+        .modal_overlay {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(1.5px);
+            -webkit-backdrop-filter: blur(1.5px);
+        }
+
+        .modal_window {
+            background: white;
+            backdrop-filter: blur(13.5px);
+            -webkit-backdrop-filter: blur(13.5px);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            width: 800px;
+            height: 600px;
+            position: relative;
+            padding: 10px;
+        }
+
+        .img_upload_space img {
+            max-width: 100%;
+            max-height: 100%;
         }
     </style>
 
     <h1>내가 작성한 모든 글</h1>
     <hr>
-    {% for post in user_posts %}
-        {% if forloop.counter0|divisibleby:3 and not forloop.first %}
-            <br> <!-- 3개의 이미지를 표시한 후 줄 바꿈 -->
-        {% endif %}
-        <div class="post-image">
-            {% if post.image %}
-                <a href="{% url 'posts:detail' pk=post.pk %}">
-                    <img src="{{ post.image }}" alt="Post Image" style="width: 196px; height: 196px;">
-                </a>
+    <div style="text-align: center;">
+        {% for post in user_posts %}
+            {% if forloop.counter0|divisibleby:3 %}
+                <br> <!-- 3개의 이미지를 표시한 후 줄 바꿈 -->
             {% endif %}
+            <div class="post-image">
+                {% if post.image %}
+                    <a href="#" class="image-modal-trigger" data-image-url="{{ post.image }}">
+                        <img src="{{ post.image }}" alt="Post Image" style="width: 196px; height: 196px;">
+                    </a>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- 모달 -->
+    <div id="first_modal" class="modal_overlay">
+        <div class="modal_window">
+            <div style="display: flex; flex-direction: row; justify-content: space-between">
+                <div style="width: 40px; background: gray"></div>
+                <div>이미지 상세보기</div>
+                <div style="width: 40px; background: gray"><span class="modal_close material-icons-outlined">close</span></div>
+            </div>
+            <div class="modal_content">
+                <div class="image_section" style="width: 66.6%; float: left;"></div>
+                <div class="info_section" style="width: 33.3%; float: left; padding-left: 10px;">
+                    <p id="user_name"></p>
+                    <hr>
+                    <p id="post_content"></p>
+                    <a href="#" id="edit_link">수정하기</a>
+                </div>
+                <div style="clear: both;"></div>
+            </div>
         </div>
-        {% comment %} <h2>{{ post.pk }} 번째 글</h2>
-        <p>작성자: {{ post.user }}</p>
-        <p>내용: {{ post.content }}</p>
-        {% if post.image %}
-            <img src="{{ post.image }}" alt="Post Image" style="max-width: 300px; max-height: 300px;">
-        {% endif %}
-        <hr>
-        {% if request.user == post.user %}
-            <a href='{% url "posts:update" pk=post.pk %}'>[수정하기]</a>
-            <a href='#' onclick="confirmDeletePost('{{ post.pk }}')">[삭제하기]</a>
-            <hr>
-            <script>
-                function confirmDeletePost(postId) {
-                    if (confirm("정말로 삭제하시겠습니까?")) {
-                        window.location.href = "{% url 'posts:delete' pk=post.pk %}";
-                    }
-                }
-            </script>
-        {% endif %}
-        <h3>댓글 목록( {{ post.comments.all|length }} )</h3>
-        <ol>
-            {% for comment in post.comments.all %}
-                <li>
-                    <strong>{{ comment.user.username }}</strong> {{ comment.content }}
-                    {% if request.user == comment.user %}
-                        <a href='{% url "posts:edit_comment" pk=comment.pk %}'>[댓글 수정하기]</a>
-                        <a href='{% url "posts:delete_comment" post_id=post.pk comment_id=comment.id %}' onclick="event.preventDefault(); if(confirm('정말로 삭제하시겠습니까?')){document.getElementById('delete-form-{{ comment.id }}').submit();}">[댓글 삭제하기]</a>
-                        <form id="delete-form-{{ comment.id }}" action='{% url "posts:delete_comment" post_id=post.pk comment_id=comment.id %}' method='POST' style="display: none;">
-                            {% csrf_token %}
-                            <input type="hidden" name="next" value="{{ request.path }}">
-                        </form>
-                    {% endif %}
-                </li>
-            {% empty %}
-                <div>댓글이 없습니다.</div>
-            {% endfor %}
-        </ol>
-        <form action='{% url 'posts:create_comment' pk=post.pk %}' method='POST'>
-            {% csrf_token %}
-            {{ comment_form }}
-            <input type='submit' value='댓글 작성하기'>
-        </form>
-        <hr>
-    {% empty %}
-        {% comment %} <p>작성한 글이 없습니다.</p> {% endcomment %}
-    {% endfor %}
-    <hr>
-    {% if request.META.HTTP_REFERER %}
-        <a href="{{ request.META.HTTP_REFERER }}">[뒤로 가기]</a>
-    {% endif %}
-    <a href='{% url "posts:home" %}'>[홈으로]</a> 
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        $(document).ready(function () {
+            $(".image-modal-trigger").click(function (e) {
+                e.preventDefault(); // 기본 동작 중단
+                var imageUrl = $(this).data('image-url'); // 클릭한 이미지의 URL 가져오기
+                var userName = $(this).data('user-name'); // 유저 이름 가져오기
+                var postContent = $(this).data('post-content'); // 글 내용 가져오기
+
+                // 모달에 이미지, 유저 이름, 글 내용 표시
+                $(".image_section").html('<img src="' + imageUrl + '" style="max-width: 100%; max-height: 100%;">');
+                $("#user_name").text(userName);
+                $("#post_content").text(postContent);
+
+                // 수정하기 링크 설정
+                var editLink = "/posts/update/" + $(this).data('post-id') + "/";
+                $("#edit_link").attr("href", editLink);
+
+                // 모달 표시
+                $("#first_modal").css({display: 'flex'});
+            });
+
+            $(".modal_close").click(function () {
+                $('#first_modal').css({display: 'none'});
+            });
+        });
+    </script>
 {% endblock %}

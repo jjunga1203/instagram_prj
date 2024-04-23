@@ -151,3 +151,4 @@ AWS_S3_REGION_NAME = 'ap-northeast-2'
 # 아래 STATICFILES_STORAGE 는 주석처리할 것
 # STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+AWS_QUERYSTRING_AUTH = False
