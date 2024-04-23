@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'accounts',
     # 'direct_msgs',
     'posts',
-    # 'stories',
+    'stories',
     'django_extensions',
     'django.contrib.admin',
     'django.contrib.auth',
