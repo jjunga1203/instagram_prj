@@ -104,7 +104,7 @@ def upload_img(request, user_idx):
         filename = default_storage.save(file.name, file)
         file_url = default_storage.url(filename)
 
-        print(filename, file_url)
+        print(filename, file_url)   
         form.profile_url = file_url
         form.profile_img_name = filename
         form.save()

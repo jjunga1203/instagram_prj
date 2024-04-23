@@ -11,7 +11,7 @@ class CustomUserCreationForm(UserCreationForm):
         super(CustomUserCreationForm, self).__init__(*args, **kwargs)
 
         self.fields['password1'].help_text = '' # "<br>6자리 이상, 숫자/문자/기호문자 포함해주세요"
-        self.fields['password1'].widget = forms.TextInput(attrs={'placeholder': '6자리 이상, 숫자/문자/기호문자 포함해주세요','class': 'placeholder-message'})
+        self.fields['password1'].widget = forms.TextInput(attrs={'type':'password', 'placeholder': '6자리 이상, 숫자/문자/기호문자 포함해주세요','class': 'placeholder-message'})
         self.fields['password1'].label = ''
         del self.fields['password2']
 

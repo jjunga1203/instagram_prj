@@ -1,12 +1,26 @@
 
 {% extends "accounts/base.html" %}
+{% load static %}
 {% block content %}
-<form action="{% url "accounts:signup" %}" method='POST'>
-    {% csrf_token %}
-    {{ form.as_p }}
 
-    <input type="submit" value='회원가입하기'>
-</form>
+<div class="container">
+    <div class="signup-box">
+        <img src="{% static 'images/posts/logo.png' %}" alt="Instagram Logo" class="logo">
+        <p>Sign up to see photos and videos from your friends.</p>
+        <p><button type="submit" onclick='#' class="login-btn">Facebook으로 로그인</button></p>
+        <form action="{% url "accounts:signup" %}" method='POST'>
+            {% csrf_token %}
+            {{ form.as_p }}
+
+            <button type="submit" class="login-btn">Sing Up</button>
+            {% comment %} <input type="submit" value='회원가입하기' class='signup-btn'> {% endcomment %}
+        </form>
+
+<p>By signing up, you agree to our Terms, Data Policy and Cookies Policy.</p>
+<p>Do you have an account?     <a href="{% url "accounts:login" %}">Login Page</a></p>
+</div>
+</div>
+
 {% endblock content %}
 
 {% block script %}
