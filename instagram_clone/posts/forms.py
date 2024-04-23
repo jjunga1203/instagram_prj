@@ -1,4 +1,4 @@
-from .models import Post, Comment, Feed
+from .models import Post, Comment
 from django import forms
 
 class CommentForm(forms.ModelForm):
@@ -19,12 +19,6 @@ class PostForm(forms.ModelForm):
                 'max_length': '입력 길이를 초과했습니다.'
             }
         }
-        
-class FeedForm(forms.ModelForm):
-    
-    class Meta:
-        model = Feed
-        fields = ['content', 'user', 'image', 'profile_image', 'like_count']
         
         # 모든 필드를 사용
         # fields = '__all__'
