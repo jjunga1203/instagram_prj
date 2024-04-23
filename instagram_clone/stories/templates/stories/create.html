@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <h1>Upload Story</h1>
-<form method="post" enctype="multipart/form-data">
+<form method="POST" action="{% url "stories:create" %}" enctype="multipart/form-data">
     {% csrf_token %}
     <input type="file" name="image">
     <button type="submit">Upload</button>
