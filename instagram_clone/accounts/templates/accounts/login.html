@@ -1,7 +1,5 @@
-{% extends "base.html" %}
-
-{% block navbar %}{% endblock navbar %}
-{% block logincontent %}
+{% extends "accounts/base.html" %}
+{% block content %}
 <h2>로그인 페이지</h2>
 
 <form action='{% url "accounts:login" %}' method='POST'>
@@ -11,7 +9,6 @@
     <input type='submit' value='로그인하기'>
 </form>
 
-{% endblock logincontent %}
-
 {% block script %}
 {% endblock script %}
+{% endblock content %}
