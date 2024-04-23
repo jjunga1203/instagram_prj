@@ -32,5 +32,9 @@ class Feed(models.Model):
     content = models.TextField()
     image = models.ImageField(upload_to='images/', max_length=1000)  # 이미지 필드로 수정
     profile_image = models.ImageField(upload_to='profile_images/')  # 프로필 이미지 필드
-    user_id = models.TextField()
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='feeds')
     like_count = models.IntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return self.title

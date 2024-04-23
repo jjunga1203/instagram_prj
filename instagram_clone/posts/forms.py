@@ -9,9 +9,9 @@ class CommentForm(forms.ModelForm):
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['title', 'content', 'image']
+        fields = ['content', 'image']
         widgets = {
-            'title': forms.TextInput(attrs={'placeholder': '제목 입력창'}),
+           
             'content': forms.Textarea(attrs={'class': 'my-class'})
         }
         error_messages = {
@@ -24,7 +24,7 @@ class FeedForm(forms.ModelForm):
     
     class Meta:
         model = Feed
-        fields = ['content', 'user_id', 'image', 'profile_image', 'like_count']
+        fields = ['content', 'user', 'image', 'profile_image', 'like_count']
         
         # 모든 필드를 사용
         # fields = '__all__'

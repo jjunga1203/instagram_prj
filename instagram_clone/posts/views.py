@@ -65,25 +65,30 @@ def create(request):
 @login_required
 def insta_post(request):
     if request.method == 'POST':
-        form = PostForm(request.POST, request.FILES)
-        if form.is_valid():
-            # 이미지를 S3에 업로드
-            if 'image' in request.FILES:
-                image = request.FILES['image']
-                filename = default_storage.save(image.name, image)
-                image_url = default_storage.url(filename)
-            else:
-                image_url = None
-
-            # 포스트를 저장합니다.
-            post = form.save(commit=False)
-            post.user = request.user
-            post.image = image_url  # 이미지 URL을 모델에 저장
-            post.save()
-            
-            return redirect('posts:home')
+        print('ee')
+        form = FeedForm(request.POST, request.FILES)
+        # if form.is_valid():
+        print('dd')
+        print("reqeust file image ", request.FILES['profile_image'])
+        # 이미지를 S3에 업로드
+        if 'image' in request.FILES:
+            image = request.FILES['image']
+            filename = default_storage.save(image.name, image)
+            image_url = default_storage.url(filename)
+        else:
+            image_url = None
+        
+        print("upload image url", image_url)
+        # 포스트를 저장합니다.
+        post = form.save(commit=False)
+        print(request.user)
+        post.user = request.user
+        post.image = image_url  # 이미지 URL을 모델에 저장
+        post.save()
+        
+        return redirect('posts:home')
     else:
-        form = PostForm()
+        form = FeedForm()
     return render(request, 'posts/insta_post.html', {'form': form})
 
 def update(request, pk):
@@ -176,3 +181,8 @@ def post_like(request, post_id):
     else:
         post.like_users.add(request.user, through_defaults={'memo': '메모'})
     return redirect('posts:home')
+
+def user_posts(request):
+    # 현재 사용자가 작성한 모든 글을 가져옴
+    user_posts = Post.objects.filter(user=request.user)
+    return render(request, 'posts/user_posts.html', {'user_posts': user_posts})
