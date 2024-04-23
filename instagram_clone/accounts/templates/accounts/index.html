@@ -14,23 +14,88 @@
     {% endif %}
     </div>
 
-    <div style='display: flex; flex-direction: column; padding: 5px 5px 5px 5px'>
+    <div style='display: flex; flex-direction: column; width:150px; padding: 5px 5px 5px 5px'>
         <span> {{ user.alias_name }} </span>
         <span> 게시물 </span>
         <span>{{user.real_name }}</span>
     </div>
 
-    <div style='display: flex; flex-direction: column; padding: 5px 5px 5px 5px'>
-        <span> 프로필 편집 </span>
-        <span> 팔로우 </span>
-        <span> 팔로워 </span>
+    <div style='display: flex; flex-direction: column; width:150px; padding: 5px 5px 5px 5px'>
+        <span> <a href='{% url "accounts:profile" user.id %}'>프로필 편집 </a></span>
+        <span> 
+        <!--팔로잉/팔로워 보여주기-->
+        <p>팔로잉 수: <a href="#" onclick="showFollowingList()">{{ following_count }}</a></p>
+        <div id="following_popup" style="display: none;">
+            <h3>팔로잉 목록</h3>
+            <ul>
+                {% for following_user in user.followings.all %}
+                    <li><a href="{% url 'accounts:profile' user_idx=following_user.id %}">{{ following_user.username }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>   
+            <!--팔로우 버튼-->
+            {% if request.user != user %}
+            <form action="{% url 'accounts:follow' user_idx=user.id %}" method="POST">
+                {% csrf_token %}
+                {% if request.user in user.followers.all %}
+                    <input type="submit" value="UnFollow">
+                {% else %}
+                    <input type="submit" value="Follow">
+                {% endif %}
+            </form>
+            {% endif %} 
+        </span>        
     </div>
-    <div style='padding: 5px 5px 5px 5px'>
+    <div style='display: flex; flex-direction: column; width:150px; padding: 5px 5px 5px 5px'>
         <span> 옵션 </span>
+        <span>
+            <p>팔로워 수: <a href="#" onclick="showFollowerList()">{{ follower_count }}</a></p>
+            <div id="follower_popup" style="display: none;">
+                <h3>팔로워 목록</h3>
+                <ul>
+                    {% for follower_user in user.followers.all %}
+                        <li><a href="{% url 'accounts:profile' user_idx=follower_user.id %}">{{ follower_user.username }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+        </span>
     </div>
 
 </div>
+
+
+
+
+
+
+
 {% endblock content %}
 
 {% block script %}
+<script>
+    // 팔로잉 목록 보여주는 함수
+    function showFollowingList() {
+        var followingPopup = document.getElementById("following_popup");
+        var followerPopup = document.getElementById("follower_popup");
+        if (followingPopup.style.display === "none") {
+            followingPopup.style.display = "block";
+            followerPopup.style.display = "none"; // 다른 팝업은 숨깁니다.
+        } else {
+            followingPopup.style.display = "none";
+        }
+    }
+
+    // 팔로워 목록 보여주는 함수
+    function showFollowerList() {
+        var followerPopup = document.getElementById("follower_popup");
+        var followingPopup = document.getElementById("following_popup");
+        if (followerPopup.style.display === "none") {
+            followerPopup.style.display = "block";
+            followingPopup.style.display = "none"; // 다른 팝업은 숨깁니다.
+        } else {
+            followerPopup.style.display = "none";
+        }
+    }
+</script>
 {% endblock script %}
