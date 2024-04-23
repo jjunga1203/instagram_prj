@@ -9,9 +9,9 @@ class CommentForm(forms.ModelForm):
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['title','content']
+        fields = ['content', 'image']
         widgets = {
-            'title': forms.TextInput(attrs={'placeholder': '제목 입력창'}),
+           
             'content': forms.Textarea(attrs={'class': 'my-class'})
         }
         error_messages = {
@@ -19,6 +19,7 @@ class PostForm(forms.ModelForm):
                 'max_length': '입력 길이를 초과했습니다.'
             }
         }
+        
         # 모든 필드를 사용
         # fields = '__all__'
 
@@ -29,12 +30,4 @@ class PostForm(forms.ModelForm):
         # exclude = ['title']
 
         # fields = ['title', 'content']
-        # widgets = {
-        #     'title': forms.TextInput(attrs={'placeholder': '제목 입력창'}),
-        #     'content': forms.Textarea(attrs={'class': 'my-class'})
-        # }
-        # error_messages = {
-        #     'title': {
-        #         'max_length': '입력 길이를 초과했습니다.'
-        #     }
-        # }
+        
