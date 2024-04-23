@@ -61,7 +61,7 @@ def index(request, user_idx):
 
     return render(request, 'accounts/index.html', context)
 
-# 개인 프로파일 화면
+# 개인 프로파일 화면 (편집모드로 띄우기)
 def profile(request, user_idx):
     # 사용자 정보 가져오기
     user = User.objects.get(pk=user_idx)
@@ -72,13 +72,23 @@ def profile(request, user_idx):
     # 사용자가 로그인되어 있는지 확인
     if not request.user.is_authenticated:
         return redirect('accounts:login')
+  
 
     context = {
         'user': user,
-        'following_count': following_count,
-        'follower_count': follower_count,
     } 
-    
+    # if request.method == 'POST':
+    #     form = CustomUserChangeForm(request.POST, instance=request.user)
+    #     if form.is_valid():
+    #         form.save()
+    #         return redirect('accounts:profile', request.user.id)
+    # else:
+    #     print(request.user)
+    #     form = CustomUserChangeForm(instance=request.user)
+    # context = {
+    #     'user': form,
+    # }
+
     return render(request, 'accounts/profile.html', context) 
 
 
@@ -154,7 +164,7 @@ def signup(request):
 def login(request):
     # 이미 로그인한 경우, 정보화면으로 이동
     if request.user.is_authenticated:
-        return redirect('accounts:profile', request.user.id)
+        return redirect('accounts:index', request.user.id)
     
     # 로그인 시도
     # 세션을 생성! 하니까 POST
@@ -163,7 +173,7 @@ def login(request):
         if form.is_valid():
             auth_login(request, form.get_user())
             print(request.user.id)
-            return redirect('accounts:profile', request.user.id)
+            return redirect('accounts:index', request.user.id)
 
     form = AuthenticationForm()
     context = {
@@ -207,7 +217,7 @@ def follow(request, user_idx):
     else:
         followed_user.followers.add(user)
         
-    return redirect('accounts:profile', user_idx=user_idx)
+    return redirect('accounts:index', user_idx=user_idx)
 
 # logout은 반드시 로그인 상태가 필수조건
 @login_required

@@ -37,26 +37,16 @@ class CustomUserCreationForm(UserCreationForm):
 
 
 class CustomUserChangeForm(UserChangeForm):
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        self.user_id = kwargs.pop('user_id', None)
-
-        super().__init__(*args, **kwargs)
-        
-        # self.fields['password'].help_text = "<a href='/accounts/change_password/{}'>비밀번호 변경</a>".format(self.user_id)
-
     class Meta(UserChangeForm.Meta):
         model = get_user_model()
         # 'profile_img', email
-        fields = ('username', 'alias_name', 'real_name','introduce', 'gender', 'is_notify')
+        fields = ('real_name','introduce', 'gender', 'is_notify')
       
         widgets = {
             'is_notify': forms.CheckboxInput(),
             'introduce':forms.TextInput(attrs={"placeholder" : "자기소개를 입력하세요"}),
         }
         labels = {
-            'gender' : '성별',
-            'introduce' : '자기소개',
-            'is_notify' : '알림여부',
             'gender' : '성별',
             'introduce' : '자기소개',
             'is_notify' : '알림여부',

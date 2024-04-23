@@ -1,10 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="story-detail">
-    <h1>{{ story.title }}</h1>
-    <img src="{% url 'stories:get_story_image' image_name=story.image.name %}" alt="Story Image">
-    <p>{{ story.content }}</p>
-    <p>Created at: {{ story.created_at }}</p>
-    <!-- 기타 스토리의 자세한 정보를 보여주는 내용을 추가할 수 있습니다. -->
+    <h1>스토리</h1>
+    <p>유저 아이디: {{story.user_id}}</p>
+    <img src="{{ story.image.url }}">
 </div>
-{% endblock %}
+{% endblock %}``
