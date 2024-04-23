@@ -12,12 +12,16 @@ from django.db.models import Q
 def home(request):
     user = get_object_or_404(User, pk=request.user.id)
     followings = user.followings.all()
+    
+    stories = Story.objects.filter(user=user)
+    
     posts = Post.objects.filter(
         Q(user__in=followings) | Q(user=user)
     ).order_by("-created_at")
     
     context = {
-        'posts': posts
+        'posts': posts,
+        'stories': stories,
     }
     return render(request, 'posts/home.html', context)
 
@@ -66,7 +70,7 @@ def update(request, pk):
         if form.is_valid():
             form.save()
             return redirect('posts:detail', post.pk)
-            
+        
     else:
         form = PostForm(instance=post)
     context = {

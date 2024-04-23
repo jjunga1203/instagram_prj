@@ -39,7 +39,6 @@
                 <img src="{% static "images/posts/create.png" %}" class="icon" alt="create">
                 <span class="text">Create</span>
             </a>
-<<<<<<< HEAD
 
             <!-- 모달 창 -->
             <div id="createModal" class="modal">
@@ -50,10 +49,7 @@
                 </div>
             </div>
             
-            <a href="{% url 'accounts:profile' user_idx=request.user.id %}" class="icon-text"> <!-- Profile -->
-=======
             <a href="{% url 'accounts:index' user_idx=request.user.id %}" class="icon-text"> <!-- Profile -->
->>>>>>> 216fe3e246e4bfea4c6c369154abe102a547ddaa
                 <img src="{% static "images/posts/avatar.png" %}" class="icon" alt="profile">
                 <span class="text">Profile</span>
             </a>
