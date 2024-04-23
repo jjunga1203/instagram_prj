@@ -6,10 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import FileResponse
 from django.conf import settings
 from django.core.files.storage import default_storage
-
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from .forms import StoryForm
+from django.utils import timezone
 
 @login_required
 def create(request):
@@ -35,12 +32,20 @@ def create(request):
         form = StoryForm()
     return render(request, 'stories/create.html', {'form': form})
 
+@login_required
 def detail(request, pk):
     story = get_object_or_404(Story, pk=pk)
     return render(request, 'stories/detail.html', {'story': story})
 
+@login_required
 def delete(request, pk):
     story = get_object_or_404(Story, pk=pk)
-    story.is_deleted = True
+    story.is_expired = True
     story.save()
     return redirect('post:home')
+
+@login_required
+def archive(request):
+    user = request.user
+    archived_stories = Story.objects.filter(created_at__lte=timezone.now() - timezone.timedelta(days=1), user=user)
+    return render(request, 'stories/archive.html', {'archived_stories': archived_stories})

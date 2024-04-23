@@ -29,8 +29,6 @@
             {% endif %}
         </span>
         <span> 
-   
-
         <!--팔로잉/팔로워 보여주기-->
         <p>
             팔로잉 수: <a href="#" onclick="showFollowingList()">{{ following_count }}</a>
@@ -56,8 +54,6 @@
         </form>
         {% endif %}  
 
-
-
         </span>        
     </div>
     <div style='display: flex; flex-direction: column; width:150px; padding: 5px 5px 5px 5px'>
@@ -79,21 +75,19 @@
                     {% endfor %}
                 </ul>
             </div>
-
         </span>
+
+        <!-- 보관함으로 이동 링크 -->
+        {% if request.user == user %}
+        <span>
+            <a href="{% url 'stories:archive' %}">보관함으로 이동</a>
+        </span>
+        {% endif %}
     </div>
 </div>
-
-
-
-
-
-
-
 {% endblock content %}
 
 {% block script %}
-
 <script>
     // 팔로잉 목록 보여주는 함수
     function showFollowingList() {
