@@ -65,6 +65,8 @@ def index(request, user_idx):
 def profile(request, user_idx):
     # 사용자 정보 가져오기
     user = User.objects.get(pk=user_idx)
+    # 사용자가 작성한 게시글 가져오기
+    user_posts = Post.objects.filter(user=user)
     # 팔로잉 및 팔로워 수 계산
     following_count = user.followings.count() 
     follower_count = user.followers.count()   
@@ -77,6 +79,7 @@ def profile(request, user_idx):
         'user': user,
         'following_count': following_count,
         'follower_count': follower_count,
+        'user_posts': user_posts,  # 사용자가 작성한 게시글을 컨텍스트에 추가
     } 
     
     return render(request, 'accounts/profile.html', context) 
