@@ -3,38 +3,7 @@
 {% block content %}
 <h3>{{ request.user }} 프로필 페이지</h3>
 
-<!--팔로우 버튼-->
-{% if request.user != user %}
-    <form action="{% url 'accounts:follow' user_idx=user.id %}" method="POST">
-        {% csrf_token %}
-        {% if request.user in user.followers.all %}
-            <input type="submit" value="UnFollow">
-        {% else %}
-            <input type="submit" value="Follow">
-        {% endif %}
-    </form>
-{% endif %}
 
-<!--팔로잉/팔로워 보여주기-->
-<p>팔로잉 수: <a href="#" onclick="showFollowingList()">{{ following_count }}</a></p>
-<div id="following_popup" style="display: none;">
-    <h3>팔로잉 목록</h3>
-    <ul>
-        {% for following_user in user.followings.all %}
-            <li><a href="{% url 'accounts:profile' user_idx=following_user.id %}">{{ following_user.username }}</a></li>
-        {% endfor %}
-    </ul>
-</div>
-
-<p>팔로워 수: <a href="#" onclick="showFollowerList()">{{ follower_count }}</a></p>
-<div id="follower_popup" style="display: none;">
-    <h3>팔로워 목록</h3>
-    <ul>
-        {% for follower_user in user.followers.all %}
-            <li><a href="{% url 'accounts:profile' user_idx=follower_user.id %}">{{ follower_user.username }}</a></li>
-        {% endfor %}
-    </ul>
-</div>
 
 <!--기타 정보-->
 <p>자기소개 : {{ user.introduce }} </p>
@@ -49,7 +18,7 @@
 {% endif %}
 </p>
 {% if user.profile_url %}
-<img src="{{user.profile_url}}" alt="프로필 사진" height=100> 
+<img src="{{user.profile_url}}" alt="프로필 사진"  style="max-width: 10%; max-height: 10%;">
 {% else %}
 {% load static %}
 <img src="{% static 'images/none_img.jpg' %}" alt="프로필 사진" height=100> 
@@ -122,29 +91,5 @@
 {% block script %}
 {% load static %}
 <script src="{% static 'js/accounts/profile.js' %}"></script>
-<script>
-    // 팔로잉 목록 보여주는 함수
-    function showFollowingList() {
-        var followingPopup = document.getElementById("following_popup");
-        var followerPopup = document.getElementById("follower_popup");
-        if (followingPopup.style.display === "none") {
-            followingPopup.style.display = "block";
-            followerPopup.style.display = "none"; // 다른 팝업은 숨깁니다.
-        } else {
-            followingPopup.style.display = "none";
-        }
-    }
 
-    // 팔로워 목록 보여주는 함수
-    function showFollowerList() {
-        var followerPopup = document.getElementById("follower_popup");
-        var followingPopup = document.getElementById("following_popup");
-        if (followerPopup.style.display === "none") {
-            followerPopup.style.display = "block";
-            followingPopup.style.display = "none"; // 다른 팝업은 숨깁니다.
-        } else {
-            followerPopup.style.display = "none";
-        }
-    }
-</script>
 {% endblock script %}

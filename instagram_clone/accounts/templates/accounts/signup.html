@@ -2,14 +2,13 @@
 {% block navbar %}{% endblock navbar %}
 
 {% block logincontent %}
+<div class='signup_body signup_container'> 
 <form action="{% url "accounts:signup" %}" method='POST'>
     {% csrf_token %}
     {{ form.as_p }}
-
-
     <input type="submit" value='회원가입하기'>
 </form>
-
+</div>
 
 {% endblock logincontent %}
 
