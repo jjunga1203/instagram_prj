@@ -19,6 +19,7 @@ def create(request):
         print(form.is_valid())
         if form.is_valid():
             story = form.save(commit=False)
+            story.user = request.user 
             story.save()
             
             # 파일을 S3에 업로드
