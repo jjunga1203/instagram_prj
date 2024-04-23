@@ -40,7 +40,6 @@
                 <span class="text">Create</span>
             </a>
 
-
             <!-- 모달 창 -->
             <div id="createModal" class="modal">
                 <div class="modal-content">
@@ -51,7 +50,7 @@
             </div>
             
             <a href="{% url 'accounts:index' user_idx=request.user.id %}" class="icon-text"> <!-- Profile -->
-
+                
                 <img src="{% static "images/posts/avatar.png" %}" class="icon" alt="profile">
                 <span class="text">Profile</span>
             </a>

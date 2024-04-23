@@ -12,49 +12,40 @@ from django.db.models import Q
 def home(request):
     user = get_object_or_404(User, pk=request.user.id)
     followings = user.followings.all()
+    
+    stories = Story.objects.filter(user=user)
+    
     posts = Post.objects.filter(
         Q(user__in=followings) | Q(user=user)
     ).order_by("-created_at")
     
     context = {
-        'posts': posts
+        'posts': posts,
+        'stories': stories,
     }
     return render(request, 'posts/home.html', context)
 
 @login_required
-def image(request):
-    if 'image' in request.FILES:
-        file = request.FILES['image']
-        filename = default_storage.save(file.name, file)
-        file_url = default_storage.url(filename)
-        print(filename, file_url)
-    else:
-        print("No image file uploaded.")
-    return render(request, 'posts/index.html')
-# def image(request):
-#     file = request.FILES['image']
-#     filename = default_storage.save(file.name, file)
-#     file_url = default_storage.url(filename)
-#     print(filename , file_url)
-#     return render(request, 'sample/index.html')
-# Create your views here.
-
-@login_required
 def create(request):
     if request.method == 'POST':
-        form = PostForm(request.POST)
+        form = PostForm(request.POST, request.FILES)
         if form.is_valid():
+            # 이미지를 S3에 업로드
+            if 'image' in request.FILES:
+                image = request.FILES['image']
+                filename = default_storage.save(image.name, image)
+                image_url = default_storage.url(filename)
+            else:
+                image_url = None
+
             post = form.save(commit=False)
             post.user = request.user
+            post.image = image_url  # 이미지 URL을 모델에 저장
             post.save()
-            post = form.save()
-            return redirect('posts:detail', post.pk)
+            return redirect('posts:detail', pk=post.pk)
     else:
         form = PostForm()
-        context = {
-            'form': form
-        }
-        return render(request, 'posts/create.html', context)
+    return render(request, 'posts/create.html', {'form': form})
 
 def update(request, pk):
     post = Post.objects.get(pk=pk)
@@ -66,7 +57,7 @@ def update(request, pk):
         if form.is_valid():
             form.save()
             return redirect('posts:detail', post.pk)
-            
+        
     else:
         form = PostForm(instance=post)
     context = {
@@ -113,6 +104,31 @@ def create_comment(request, pk):
     }
     return render(request, 'posts/detail.html', context)
 
+def edit_comment(request, pk):
+    # 댓글을 가져옵니다.
+    comment = Comment.objects.get(pk=pk)
+
+    # POST 요청을 처리합니다.
+    if request.method == 'POST':
+        # POST 데이터와 함께 댓글 폼을 초기화합니다.
+        comment_form = CommentForm(request.POST, instance=comment)
+        if comment_form.is_valid():
+            # 폼이 유효하다면 수정된 댓글을 저장합니다.
+            comment_form.save()
+            # 댓글 수정 후 해당 포스트의 상세 페이지로 리다이렉트합니다.
+            return redirect('posts:detail', pk=comment.post.pk)
+    else:
+        # GET 요청의 경우 초기 댓글 폼을 생성합니다.
+        comment_form = CommentForm(instance=comment)
+
+    # 댓글 수정을 위한 폼과 해당 댓글이 속한 포스트를 템플릿 컨텍스트에 추가합니다.
+    context = {
+        'comment_form': comment_form,
+        'post': comment.post
+    }
+    # 댓글 수정 템플릿을 렌더링합니다.
+    return render(request, 'posts/edit_comment.html', context)
+
 def post_like(request, post_id):
     post = Post.objects.get(pk=post_id)
     # 이미 좋아요를 한 사람의 경우에는 좋아요를 취소
@@ -121,3 +137,8 @@ def post_like(request, post_id):
     else:
         post.like_users.add(request.user, through_defaults={'memo': '메모'})
     return redirect('posts:home')
+
+def user_posts(request):
+    # 현재 사용자가 작성한 모든 글을 가져옴
+    user_posts = Post.objects.filter(user=request.user)
+    return render(request, 'posts/user_posts.html', {'user_posts': user_posts})
