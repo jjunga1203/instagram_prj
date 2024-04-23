@@ -1,35 +1,38 @@
 {% extends 'base.html' %}
-
 {% block content %}
-    <h1>Posts</h1>
-    <a href='{% url "posts:create" %}'>게시글 작성하기</a>
-    <hr>
-    {% for post in posts %}
-      <p>글 번호: {{ post.pk }}</p>
-      <p>글 작성자: {{ post.user }}</p>
-      <a href='{% url "posts:detail" pk=post.pk %}'>
-        <p>글 제목: {{ post.title }}</p>
-      </a>
-      <p>글 내용: {{ post.content }}</p>
-      <form action=' {% url "posts:post_like" post_id=post.pk %}' method='POST'>
-        {% csrf_token %}
-        {% if request.user in post.like_users.all %}
-          <input type='submit' value = '좋아요 취소하기'>
-        {% else %}
-          <input type='submit' value = '좋아요'>
-        {% endif %}
-      </form>
-      <hr>
-    {% endfor %}
-
 {% load static %}
-<div id="sidebar">
-    <nav>
-        <img src="{% static "images/posts/logo.png" %}" class="icon" alt="logo">
-        <img src="{% static "images/posts/home.png" %}" class="icon" alt="home">
-        <img src="{% static "images/posts/search.png" %}" class="icon" alt="search">
-        <img src="{% static "images/posts/messages.png" %}" class="icon" alt="messages">
-        <img src="{% static "images/posts/notifications.png" %}" class="icon" alt="notifications">
-    </nav>
+<!--메인 섹션-->
+<div class="stories">
+    <div class="stories-card">
+        <div class="profile-pic"><img src={% static "images/posts/avatar.png" %}></div>
+        <p class="username">user_name_1</p>
+    </div>
+</div>
+
+<div class="posts">
+    {% for post in posts %}
+    <div class="post">
+        <div class="info">
+            <div class="user">
+                <div class="profile-pic"><img src="{% static 'images/posts/avatar.png' %}"></div>
+                <p class="username">{{ post.user.username }}</p>
+            </div>
+        </div>
+        <img src="{% static 'images/posts/home.png' %}" class="post-image" alt="">
+        <div class="post-content">
+            <div class="reaction-wrapper">
+                <img src="{% static 'images/posts/notifications.png' %}" class="icon" alt="">
+            </div>
+            <p class="likes">{{ post.like_users.count }} likes</p>
+            <p class="description"><span>{{ post.user.username }}</span> {{ post.content }}</p>
+            <p class="post-time">{{ post.created_at }}</p>
+        </div>
+        <div class="comment-wrapper">
+            <input type="text" class="comment-box" placeholder="Add a comment">
+            <button class="comment-btn">post</button>
+        </div>
+    </div>
+    {% endfor %}
 </div>
 {% endblock content %}
+{% block login %}{% endblock login %}

@@ -1,3 +1,6 @@
+from typing import Any
+from django.db import models
+
 from django.contrib.auth import get_user_model
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
@@ -24,3 +27,26 @@ class CustomUserCreationForm(UserCreationForm):
             # 'password' : '비밀번호',
         }
 
+class CustomUserChangeForm(UserChangeForm):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        self.user_id = kwargs.pop('user_id', None)
+
+        super().__init__(*args, **kwargs)
+        
+        # self.fields['password'].help_text = "<a href='/accounts/change_password/{}'>비밀번호 변경</a>".format(self.user_id)
+
+    class Meta(UserChangeForm.Meta):
+        model = get_user_model()
+        # 'profile_img', email
+        fields = ('introduce', 'gender', 'is_notify')
+      
+        widgets = {
+            'is_notify': forms.CheckboxInput(),
+            'introduce':forms.TextInput(attrs={"placeholder" : "자기소개를 입력하세요"}),
+        }
+        labels = {
+            'gender' : '성별',
+            'introduce' : '자기소개',
+            'is_notify' : '알림여부',
+            # 'password' : '비밀번호',
+        }
