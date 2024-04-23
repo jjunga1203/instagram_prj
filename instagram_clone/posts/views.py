@@ -1,12 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Post, Comment
 from accounts.models import User
+from stories.models import Story
 from .forms import PostForm, CommentForm
 from django.contrib.auth.decorators import login_required
 from django.core.files.storage import default_storage
 from django.utils.datastructures import MultiValueDictKeyError
 from django.db.models import Q
 
+@login_required
 def home(request):
     user = get_object_or_404(User, pk=request.user.id)
     followings = user.followings.all()
