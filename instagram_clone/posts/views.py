@@ -13,8 +13,11 @@ def home(request):
     user = get_object_or_404(User, pk=request.user.id)
     followings = user.followings.all()
     
-    stories = Story.objects.filter(user=user)
-    
+    stories = Story.objects.filter(
+        Q(is_deleted=False) & 
+        (Q(user__in=followings) | Q(user=user))
+    )
+
     posts = Post.objects.filter(
         Q(user__in=followings) | Q(user=user)
     ).order_by("-created_at")

@@ -38,3 +38,9 @@ def create(request):
 def detail(request, pk):
     story = get_object_or_404(Story, pk=pk)
     return render(request, 'stories/detail.html', {'story': story})
+
+def delete(request, pk):
+    story = get_object_or_404(Story, pk=pk)
+    story.is_deleted = True
+    story.save()
+    return redirect('post:home')
