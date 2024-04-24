@@ -8,13 +8,21 @@ from django.contrib.auth.decorators import login_required
 from django.core.files.storage import default_storage
 from django.utils.datastructures import MultiValueDictKeyError
 from django.db.models import Q
+from django.utils import timezone
+from datetime import timedelta
+from django.db.models import Count
 
 @login_required
 def home(request):
     user = get_object_or_404(User, pk=request.user.id)
     followings = user.followings.all()
     
-    stories = Story.objects.filter(user=user)
+    stories = Story.objects.filter(
+        Q(user__in=followings) | Q(user=user), 
+        created_at__gte=timezone.now() - timedelta(days=1)
+    )
+
+    user_grouped_stories = stories.values('user__id').annotate(num_stories=Count('id'))
     
     posts = Post.objects.filter(
         Q(user__in=followings) | Q(user=user)
@@ -22,7 +30,7 @@ def home(request):
     
     context = {
         'posts': posts,
-        'stories': stories,
+        'user_grouped_stories': user_grouped_stories,
     }
     return render(request, 'posts/home.html', context)
 
