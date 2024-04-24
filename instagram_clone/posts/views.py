@@ -111,24 +111,37 @@ def create_comment_notification(user, post, comment_content):
     Notification.objects.create(user=post.user, message=message, post=post)
 
 def create_comment(request, pk):
-    post = Post.objects.get(pk=pk)
-    comment_form = CommentForm(request.POST)
-    if comment_form.is_valid():
-        comment = comment_form.save(commit=False)
-        comment.post = post
-        comment.user = request.user
-        comment.save()
+    if request.method == 'POST':
+        content = request.POST.get('content')
+        if content:
+            post = Post.objects.get(pk=pk)
+            comment = Comment.objects.create(post=post, user=request.user, content=content)
 
-        # 댓글이 작성되었을 때 알림 생성
-        create_comment_notification(request.user, post, comment.content)
+            # 댓글이 작성되었을 때 알림 생성
+            create_comment_notification(request.user, post, content)
 
-        return redirect('posts:detail', pk=pk)
+    return redirect('accounts:index', user_idx=request.user.pk)
 
-    context = {
-        'post': post,
-        'comment_form': comment_form
-    }
-    return render(request, 'posts/detail.html', context)
+# 혹시 몰라 남겨놓음 지워도 됨
+# def create_comment(request, pk):
+#     post = Post.objects.get(pk=pk)
+#     comment_form = CommentForm(request.POST)
+#     if comment_form.is_valid():
+#         comment = comment_form.save(commit=False)
+#         comment.post = post
+#         comment.user = request.user
+#         comment.save()
+
+#         # 댓글이 작성되었을 때 알림 생성
+#         create_comment_notification(request.user, post, comment.content)
+
+#         return redirect('posts:detail', pk=pk)
+
+#     context = {
+#         'post': post,
+#         'comment_form': comment_form
+#     }
+#     return render(request, 'posts/detail.html', context)
 
 def edit_comment(request, pk):
     # 댓글을 가져옵니다.
