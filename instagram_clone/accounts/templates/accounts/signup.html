@@ -8,7 +8,7 @@
         <img src="{% static 'images/posts/logo.png' %}" alt="Instagram Logo" class="logo-instagram">
         <p>Sign up to see photos and videos from your friends.</p>
         <p><button type="submit" onclick='#' class="login-btn">Facebook으로 로그인</button></p>
-        <form action="{% url "accounts:signup" %}" method='POST'>
+        <form id='signup_form' action="{% url "accounts:signup" %}" method='POST'>
             {% csrf_token %}
             {% comment %} {{ form.as_p }} {% endcomment %}
             <p>{{ form.username }}</p>
@@ -16,7 +16,7 @@
             <p>{{ form.alias_name }}</p>
             <p>{{ form.password1 }}</p>
             <span id='warning1' class='warning-message'></span><br>
-            <button type="submit" class="login-btn">Sing Up</button>
+            <button type="submit" id='signupbtn' class="login-btn">Sing Up</button>
             {% comment %} <input type="submit" value='회원가입하기' class='signup-btn'> {% endcomment %}
         </form>
 
@@ -34,25 +34,50 @@ const password1 = document.querySelector('#password1')
 const warning1 = document.querySelector('#warning1')
 let pw_flag = false
 
+function chk_pw(pw_str){
+    var regex = /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d!@#$%^&*()]{6,12}$/;   
+    if (regex.test(pw_str) ) {
+        console.log('유효함')
+        return true
+    } else {
+        console.log('유효하지 않음')
+        warning1.innerText = '비밀번호는 영문자,숫자를 포함한 6자 이상이어야 합니다.'
+        return false
+    }
+}
+
 // change 이벤트(input 포커스 아웃)에 비밀번호 검증 로직 추가
 password1.addEventListener('change', function (event) {
     const p1 = event.target.value
-    console.log(p1.value)
+    console.log(p1)
 
-    var regex = /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d!@#$%^&*()]{6,12}$/;   
-    //(?=.*[!$@%])
-
-    if (regex.test(p1) ) {
-        console.log('유효함')
+    if (chk_pw(p1)){
         warning1.innerText = ''
-    } else {
-
-        console.log('유효하지 않음')
+    }else {
         warning1.innerText = '비밀번호는 영문자,숫자를 포함한 6자 이상이어야 합니다.'
         password1.focus()
-
     }
 })
+
+const loginbtn = document.querySelector('#signupbtn')
+
+
+
+// 회원가입 버튼 클릭시 비밀번호 체크
+const formTag = document.querySelector('#signup_form')
+
+formTag.addEventListener('submit', (event) =>{
+    const p1 = password1.value
+
+    if (chk_pw(p1)){
+        warning1.innerText = ''
+    }else {
+        warning1.innerText = '비밀번호는 영문자,숫자를 포함한 6자 이상이어야 합니다.'
+        event.preventDefault()
+        password1.focus()
+    }
+});
+
 
 </script>
 {% endblock script %}

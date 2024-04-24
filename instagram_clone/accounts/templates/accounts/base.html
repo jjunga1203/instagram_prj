@@ -13,13 +13,6 @@
 
 </head>
 <body class='signup_body'>
-    {% if user.is_authenticated %}
-    {% comment %} <input type="button" onclick="location.href='{% url "accounts:profile" user.id%}'" value='PROFILE' class="btn btn-outline-secondary"/>
-        {% endcomment %}
-    <input type="button" onclick="location.href='{% url "accounts:logout" %}'" value='LOGOUT' class="btn btn-outline-secondary"/>
-    {% else %}
-        {% comment %} <input type="button" onclick="location.href='{% url "accounts:signup" %}'" value='SIGNUP' class="btn btn-outline-secondary"/> {% endcomment %}
-    {% endif %}
 
     {% block content %}{% endblock content %}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>

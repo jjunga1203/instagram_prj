@@ -20,7 +20,9 @@ from django.utils.datastructures import MultiValueDictKeyError
 
 from django.contrib.auth.hashers import check_password
 
+
 # Create your views here.
+@login_required
 def change_pw(request, user_idx):
     if not request.user.is_authenticated:
         return redirect('accounts:login')
@@ -40,7 +42,7 @@ def change_pw(request, user_idx):
     else:
         return redirect('accounts:profile', request.user.id)
 
-
+@login_required
 def index(request, user_idx):
     if not request.user.is_authenticated:
         return redirect('accounts:login')
@@ -67,8 +69,53 @@ def index(request, user_idx):
 
     return render(request, 'accounts/index.html', context)
 
+
+import json
+from django.http import JsonResponse
+
 # 개인 프로파일 화면 (편집모드로 띄우기)
+@login_required
 def profile(request, user_idx):
+    # 사용자가 로그인되어 있는지 확인
+    if not request.user.is_authenticated:
+        return redirect('accounts:login')
+  
+    # 사용자 정보 가져오기
+    user = User.objects.get(pk=user_idx)
+    print(user.id, user.pk)
+
+    if request.method == 'POST':
+        data = json.loads(request.body)
+
+        # JSON 데이터에서 'gender' 필드 값을 가져옵니다.
+        gender = data.get('gender')
+        introduce = data.get('introduce')
+
+        print(gender, introduce)
+        form = CustomUserChangeForm(data, instance=user)
+        print(form.username)
+        if form.is_valid():
+            print(form.username)
+            form.introduce = introduce
+            form.gender = gender
+
+            form.save()
+        else:
+            print('저장오류')
+        return redirect('accounts:profile', request.user.id)
+    else:
+        print(request.user)
+        
+        # user = CustomUserChangeForm(instance=user)
+    context = {
+        'user': user,
+    }
+
+    return render(request, 'accounts/profile.html', context) 
+
+
+# 개인 프로파일 화면 (편집모드로 띄우기)
+def old_profile(request, user_idx):
     # 사용자 정보 가져오기
     user = User.objects.get(pk=user_idx)
     # 사용자가 작성한 게시글 가져오기
@@ -89,22 +136,13 @@ def profile(request, user_idx):
         'user_posts': user_posts,  # 사용자가 작성한 게시글을 컨텍스트에 추가
 
     } 
-    # if request.method == 'POST':
-    #     form = CustomUserChangeForm(request.POST, instance=request.user)
-    #     if form.is_valid():
-    #         form.save()
-    #         return redirect('accounts:profile', request.user.id)
-    # else:
-    #     print(request.user)
-    #     form = CustomUserChangeForm(instance=request.user)
-    # context = {
-    #     'user': form,
-    # }
+
 
     return render(request, 'accounts/profile.html', context) 
 
 
 # 사진 업로드
+@login_required
 def upload_img(request, user_idx):
     # form = UserChangeForm(request.user, request.POST)
     form = get_user_model().objects.get(pk=user_idx)
@@ -125,6 +163,7 @@ def upload_img(request, user_idx):
 
     return redirect('accounts:profile', request.user.id)
 
+@login_required
 def delete_img(request, user_idx):
     form = get_user_model().objects.get(pk=user_idx)
     default_storage.delete(form.profile_img_name)
@@ -171,10 +210,6 @@ from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from .forms import LoginForm
 
-        # form = AuthenticationForm(request, request.POST)
-        # if form.is_valid():
-        #     auth_login(request, form.get_user())
-
 
 def login(request):
     # 이미 로그인한 경우, 정보화면으로 이동
@@ -196,7 +231,7 @@ def login(request):
     }
     return render(request, 'accounts/login.html', context)
 
-
+@login_required
 def search(request):
     searched_users = None
     searched_posts = None
