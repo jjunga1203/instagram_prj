@@ -11,7 +11,7 @@ class CustomUserCreationForm(UserCreationForm):
         super(CustomUserCreationForm, self).__init__(*args, **kwargs)
 
         self.fields['password1'].help_text = '' # "<br>6자리 이상, 숫자/문자/기호문자 포함해주세요"
-        self.fields['password1'].widget = forms.TextInput(attrs={'placeholder': '6자리 이상, 숫자/문자/기호문자 포함해주세요','class': 'placeholder-message'})
+        self.fields['password1'].widget = forms.TextInput(attrs={'id':'password1', 'type':'password', 'placeholder': '6자리 이상, 숫자/문자/기호문자 포함해주세요','class': 'placeholder-message'})
         self.fields['password1'].label = ''
         del self.fields['password2']
 
@@ -37,17 +37,10 @@ class CustomUserCreationForm(UserCreationForm):
 
 
 class CustomUserChangeForm(UserChangeForm):
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        self.user_id = kwargs.pop('user_id', None)
-
-        super().__init__(*args, **kwargs)
-        
-        # self.fields['password'].help_text = "<a href='/accounts/change_password/{}'>비밀번호 변경</a>".format(self.user_id)
-
     class Meta(UserChangeForm.Meta):
         model = get_user_model()
         # 'profile_img', email
-        fields = ('username', 'alias_name', 'real_name','introduce', 'gender', 'is_notify')
+        fields = ('real_name','introduce', 'gender', 'is_notify')
       
         widgets = {
             'is_notify': forms.CheckboxInput(),
@@ -57,8 +50,17 @@ class CustomUserChangeForm(UserChangeForm):
             'gender' : '성별',
             'introduce' : '자기소개',
             'is_notify' : '알림여부',
-            'gender' : '성별',
-            'introduce' : '자기소개',
-            'is_notify' : '알림여부',
             # 'password' : '비밀번호',
         }
+
+class LoginForm(forms.Form):
+    username = forms.CharField(
+        max_length=100,
+        label='',
+        widget=forms.TextInput(attrs={'placeholder': '가입한 핸드폰번호/이메일 입력'})
+    )
+    password = forms.CharField(
+        max_length=100,
+        label='',
+        widget=forms.PasswordInput(attrs={'placeholder': '비밀번호'})
+    )

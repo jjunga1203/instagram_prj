@@ -18,7 +18,7 @@
 {% endif %}
 </p>
 {% if user.profile_url %}
-<img src="{{user.profile_url}}" alt="프로필 사진"  style="max-width: 10%; max-height: 10%;">
+<img src="{{user.profile_url}}" alt="프로필 사진"  style="max-width: 10%;">
 {% else %}
 {% load static %}
 <img src="{% static 'images/none_img.jpg' %}" alt="프로필 사진" width=50px> 
@@ -26,7 +26,7 @@
 {% endif %}
 <br>
 <!-- add_box id 속성 추가 -->
-<span id="add_feed" class="material-icons-outlined">사진 변경</span>
+<span id="add_feed" class="material-icons-outlined"><a href="#" class='btn btn-primary btn-sm'>사진 변경</a></span>
 <br>
 
 <!-- model id 속성 추가 -->
@@ -34,24 +34,26 @@
 <div id="modal_add_feed" class="modal_overlay" style='display:none'> 
     <div class="modal_profile_window">
         <div class="modal_title">
-        <div> 프로필 사진 바꾸기 </div>
+        <h3 align='center'>프로필 사진 바꾸기 
+            <span id="close_modal" class="material-icons-outlined">
+                <a href="#" class='btn btn-primary btn-sm'>취소</a>
+            </span>
+        </h3>
+        </div>
+        <br>
         <div class="modal_content">
             <div> 사진 업로드 </div>
                 <form method="post" action="{% url "accounts:upload_img" user.id %}" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="file" name="profile_img">
-                <button type="submit" value='사진올리기'>Upload</button>
+                <button type="submit" value='사진올리기' class='btn btn-primary btn-sm'>Upload</button>
                 </form>
-
+            <p>
             <form class='delete_img' method='post' action="{% url "accounts:delete_img" user.id %}">
                 {% csrf_token %}
-                <button type="submit" value='사진삭제'>현재 사진 삭제</button>
-            </form>
+                <button type="submit" value='사진삭제' class='btn btn-primary btn-sm'>현재 사진 삭제</button>
+            </form></p>
 
-            <span id="close_modal" class="material-icons-outlined">
-                취소
-            </span>
-        </div>
         </div>
     </div>
 </div>

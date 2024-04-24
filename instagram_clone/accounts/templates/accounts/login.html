@@ -1,14 +1,25 @@
 {% extends "accounts/base.html" %}
+{% load static %}
 {% block content %}
-<h2>로그인 페이지</h2>
+<div class="container">
+    <div class="login-box">
+        <img src="{% static 'images/posts/logo.png' %}" alt="Instagram Logo" class="logo-instagram">
+        <form action='{% url "accounts:login" %}' method='POST'>
+            {% csrf_token %}
+            {{ form.as_p}}
+            {% comment %} <p>{{ form.username }} </p> {% endcomment %}
+            {% comment %} <p>{{ form.password }} </p> {% endcomment %}
 
-<form action='{% url "accounts:login" %}' method='POST'>
-    {% csrf_token %}
-    {{ form.as_p }}
-    
-    <input type='submit' value='로그인하기'>
-</form>
+        
+            <button type="submit" class="login-btn">Log In</button>
+        </form>
+        {% comment %} <p class="forgot-password">Forgot password?</p> {% endcomment %}
+        <div class="signup-link">
+            <p>Don't have an account? <a href="{% url "accounts:signup" %} ">Sign up</a></p>
+        </div>
+    </div>
+</div>
 
+{% endblock content %}
 {% block script %}
 {% endblock script %}
-{% endblock content %}
