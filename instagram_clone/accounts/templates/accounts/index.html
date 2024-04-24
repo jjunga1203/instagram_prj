@@ -114,17 +114,18 @@
 
 <h3>계정페이지 관리</h3>
 
-<div style='display: flex; flex-direction: row;' class="profile" >
+<div style='display: flex; flex-direction: row;'>
+
     <div style='padding: 5px 5px 5px 5px; '>
     {% if user.profile_url %}
-    <img class='index-profile-pic-img' src="{{user.profile_url}}" alt="프로필 사진"  style='width:50px'>
+    <img src="{{user.profile_url}}" alt="프로필 사진" height=100>
     {% else %}
     {% load static %}
-    <img class='index-profile-pic-img' src="{% static 'images/none_img.jpg' %}" alt="프로필 사진" style='width:50px'>
+    <img src="{% static 'images/none_img.jpg' %}" alt="프로필 사진" height=100>
     {% endif %}
     </div>
 
-    <div style='display: flex; flex-direction: column; width:100px; padding: 5px 5px 5px 5px'>
+    <div style='display: flex; flex-direction: column; width:150px; padding: 5px 5px 5px 5px'>
         <span> {{ user.alias_name }} </span>
         <span> 게시물 </span>
         <span>{{user.real_name }}</span>
