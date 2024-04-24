@@ -11,7 +11,7 @@ class CustomUserCreationForm(UserCreationForm):
         super(CustomUserCreationForm, self).__init__(*args, **kwargs)
 
         self.fields['password1'].help_text = '' # "<br>6자리 이상, 숫자/문자/기호문자 포함해주세요"
-        self.fields['password1'].widget = forms.TextInput(attrs={'type':'password', 'placeholder': '6자리 이상, 숫자/문자/기호문자 포함해주세요','class': 'placeholder-message'})
+        self.fields['password1'].widget = forms.TextInput(attrs={'id':'password1', 'type':'password', 'placeholder': '6자리 이상, 숫자/문자/기호문자 포함해주세요','class': 'placeholder-message'})
         self.fields['password1'].label = ''
         del self.fields['password2']
 
@@ -52,3 +52,15 @@ class CustomUserChangeForm(UserChangeForm):
             'is_notify' : '알림여부',
             # 'password' : '비밀번호',
         }
+
+class LoginForm(forms.Form):
+    username = forms.CharField(
+        max_length=100,
+        label='',
+        widget=forms.TextInput(attrs={'placeholder': '가입한 핸드폰번호/이메일 입력'})
+    )
+    password = forms.CharField(
+        max_length=100,
+        label='',
+        widget=forms.PasswordInput(attrs={'placeholder': '비밀번호'})
+    )

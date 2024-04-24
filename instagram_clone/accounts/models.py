@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django import forms
 
 # Create your models here.
 class User(AbstractUser):
@@ -22,3 +23,5 @@ class User(AbstractUser):
     followings = models.ManyToManyField("self", symmetrical=False, related_name="followers")
     profile_url = models.TextField(default='')
     profile_img_name = models.CharField(max_length=100, default='')
+
+

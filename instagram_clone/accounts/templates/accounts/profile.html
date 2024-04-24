@@ -18,7 +18,7 @@
 {% endif %}
 </p>
 {% if user.profile_url %}
-<img src="{{user.profile_url}}" alt="프로필 사진"  style="max-width: 10%; max-height: 10%;">
+<img src="{{user.profile_url}}" alt="프로필 사진"  style="max-width: 10%;">
 {% else %}
 {% load static %}
 <img src="{% static 'images/none_img.jpg' %}" alt="프로필 사진" width=50px> 
@@ -26,7 +26,7 @@
 {% endif %}
 <br>
 <!-- add_box id 속성 추가 -->
-<span id="add_feed" class="material-icons-outlined">사진 변경</span>
+<span id="add_feed" class="material-icons-outlined"><a href="#" class='btn btn-primary btn-sm'>사진 변경</a></span>
 <br>
 
 <!-- model id 속성 추가 -->
@@ -34,24 +34,26 @@
 <div id="modal_add_feed" class="modal_overlay" style='display:none'> 
     <div class="modal_profile_window">
         <div class="modal_title">
-        <div> 프로필 사진 바꾸기 </div>
+        <h3 align='center'>프로필 사진 바꾸기 
+            <span id="close_modal" class="material-icons-outlined">
+                <a href="#" class='btn btn-primary btn-sm'>취소</a>
+            </span>
+        </h3>
+        </div>
+        <br>
         <div class="modal_content">
             <div> 사진 업로드 </div>
                 <form method="post" action="{% url "accounts:upload_img" user.id %}" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="file" name="profile_img">
-                <button type="submit" value='사진올리기'>Upload</button>
+                <button type="submit" value='사진올리기' class='btn btn-primary btn-sm'>Upload</button>
                 </form>
-
+            <p>
             <form class='delete_img' method='post' action="{% url "accounts:delete_img" user.id %}">
                 {% csrf_token %}
-                <button type="submit" value='사진삭제'>현재 사진 삭제</button>
-            </form>
+                <button type="submit" value='사진삭제' class='btn btn-primary btn-sm'>현재 사진 삭제</button>
+            </form></p>
 
-            <span id="close_modal" class="material-icons-outlined">
-                취소
-            </span>
-        </div>
         </div>
     </div>
 </div>
@@ -85,61 +87,7 @@
         </form>
     </div>
 </div>
-<!-- 사용자가 작성한 글 목록 -->
-<h4>내가 작성한 글 목록</h4>
-<hr>
-    {% for post in user_posts %}
-        <h2>{{ post.pk }} 번째 글</h2>
-        <p>작성자: {{ post.user }}</p>
-        <p>내용: {{ post.content }}</p>
-        {% if post.image %}
-            <img src="{{ post.image }}" alt="Post Image" style="max-width: 300px; max-height: 300px;">
-        {% endif %}
-        <hr>
-        {% if request.user == post.user %}
-            <a href='{% url "posts:update" pk=post.pk %}'>[수정하기]</a>
-            <a href='#' onclick="confirmDeletePost('{{ post.pk }}')">[삭제하기]</a>
-            <hr>
-            <script>
-                function confirmDeletePost(postId) {
-                    if (confirm("정말로 삭제하시겠습니까?")) {
-                        window.location.href = "{% url 'posts:delete' pk=post.pk %}";
-                    }
-                }
-            </script>
-        {% endif %}
-        <h3>댓글 목록( {{ post.comments.all|length }} )</h3>
-        <ol>
-            {% for comment in post.comments.all %}
-                <li>
-                    <strong>{{ comment.user.username }}</strong> {{ comment.content }}
-                    {% if request.user == comment.user %}
-                        <a href='{% url "posts:edit_comment" pk=comment.pk %}'>[댓글 수정하기]</a>
-                        <a href='{% url "posts:delete_comment" post_id=post.pk comment_id=comment.id %}' onclick="event.preventDefault(); if(confirm('정말로 삭제하시겠습니까?')){document.getElementById('delete-form-{{ comment.id }}').submit();}">[댓글 삭제하기]</a>
-                        <form id="delete-form-{{ comment.id }}" action='{% url "posts:delete_comment" post_id=post.pk comment_id=comment.id %}' method='POST' style="display: none;">
-                            {% csrf_token %}
-                            <input type="hidden" name="next" value="{{ request.path }}">
-                        </form>
-                    {% endif %}
-                </li>
-            {% empty %}
-                <div>댓글이 없습니다.</div>
-            {% endfor %}
-        </ol>
-        <form action='{% url 'posts:create_comment' pk=post.pk %}' method='POST'>
-            {% csrf_token %}
-            {{ comment_form }}
-            <input type='submit' value='댓글 작성하기'>
-        </form>
-        <hr>
-    {% empty %}
-        <p>작성한 글이 없습니다.</p>
-    {% endfor %}
-    <hr>
-    {% if request.META.HTTP_REFERER %}
-        <a href="{{ request.META.HTTP_REFERER }}">[뒤로 가기]</a>
-    {% endif %}
-    <a href='{% url "posts:home" %}'>[홈으로]</a>
+
 {% endblock content %}
 
 {% block script %}

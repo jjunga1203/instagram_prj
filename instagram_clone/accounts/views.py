@@ -3,6 +3,7 @@ from .forms import CustomUserCreationForm, CustomUserChangeForm
 from django.contrib.auth.forms import AuthenticationForm, UserChangeForm, UserCreationForm, PasswordChangeForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
+from django.contrib.auth.views import LoginView
 
 from .models import User
 from posts.models import Post
@@ -44,7 +45,9 @@ def index(request, user_idx):
         return redirect('accounts:login')
 
     user = User.objects.get(pk=user_idx)
-    
+    # 사용자가 작성한 게시글 가져오기
+    user_posts = Post.objects.filter(user=user)
+        
     # 팔로잉 및 팔로워 수 계산
     following_count = user.followings.count() 
     follower_count = user.followers.count()   
@@ -57,6 +60,8 @@ def index(request, user_idx):
         'user': user,
         'following_count': following_count,
         'follower_count': follower_count,
+        'user_posts': user_posts,  # 사용자가 작성한 게시글을 컨텍스트에 추가
+
     } 
 
     return render(request, 'accounts/index.html', context)
@@ -116,12 +121,6 @@ def upload_img(request, user_idx):
         form.save()
     else:
         print("No image file uploaded.")
-    
-    # context = {
-    #     'profile_url': file_url,
-    #     'profile_img_name' : filename,
-    # }
-    # return JsonResponse(context)
 
     return redirect('accounts:profile', request.user.id)
 
@@ -160,12 +159,21 @@ def signup(request):
             print(form.errors)
             return redirect('accounts:signup')
     else:
-        print('3')
         form = CustomUserCreationForm()
         context = {
             'form':form
         }
     return render(request, 'accounts/signup.html', context)
+
+
+from django.contrib.auth import authenticate, login
+from django.shortcuts import render, redirect
+from .forms import LoginForm
+
+        # form = AuthenticationForm(request, request.POST)
+        # if form.is_valid():
+        #     auth_login(request, form.get_user())
+
 
 def login(request):
     # 이미 로그인한 경우, 정보화면으로 이동
@@ -186,6 +194,7 @@ def login(request):
         'form':form
     }
     return render(request, 'accounts/login.html', context)
+
 
 def search(request):
     searched_users = None

@@ -3,11 +3,12 @@
 {% block content %}
 <div class="container">
     <div class="login-box">
-        <img src="{% static 'images/posts/logo.png' %}" alt="Instagram Logo" class="logo">
+        <img src="{% static 'images/posts/logo.png' %}" alt="Instagram Logo" class="logo-instagram">
         <form action='{% url "accounts:login" %}' method='POST'>
             {% csrf_token %}
-            <p>{{ form.username }} </p>
-            <p>{{ form.password }} </p>
+            {{ form.as_p}}
+            {% comment %} <p>{{ form.username }} </p> {% endcomment %}
+            {% comment %} <p>{{ form.password }} </p> {% endcomment %}
 
         
             <button type="submit" class="login-btn">Log In</button>
@@ -18,13 +19,6 @@
         </div>
     </div>
 </div>
-
-{% comment %} <form action='{% url "accounts:login" %}' method='POST'>
-    {% csrf_token %}
-    {{ form.as_p }} 
-    
-    <input type='submit' value='로그인하기'>
-</form> {% endcomment %}
 
 {% endblock content %}
 {% block script %}
