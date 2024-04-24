@@ -26,7 +26,9 @@ def create(request):
             file_url = default_storage.url(filename)
             print(filename, file_url)
             
-            return redirect('stories:detail', pk=story.pk)  # 상세 페이지로 리디렉션
+
+            # return redirect('stories:detail', pk=story.pk)  # 상세 페이지로 리디렉션
+            return redirect('posts:home')  # 상세 페이지로 리디렉션
         else:
             print(form.errors)
     else:

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-
+<br><h3>[ 알림 ]</h3>
 {% for content in contents %}
     <div class="notification">
         <table class='table-responsive'>
@@ -16,7 +16,7 @@
                 <td></td>
             </tr>
             <tr>
-                <td><b>{{content.real_name}}</b> {{ content.msg }}
+                <td><b>&nbsp;{{content.real_name}}</b> {{ content.msg }}<br>&nbsp;&nbsp;
                     {{ content.created_at }}</td>
             </tr>
         </table>

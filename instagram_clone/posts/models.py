@@ -2,7 +2,7 @@ from django.db import models
 from django.conf import settings
 
 class Post(models.Model):
-    image = models.ImageField(upload_to='images/', null=True, blank=True, max_length=1000)  # 이미지 필드를 선택적으로 만듦
+    image = models.ImageField(upload_to='images/', max_length=1000)  # 이미지 필드를 선택적으로 만듦
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='posts')
     like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_posts', through='PostLikeUsers')
     title = models.CharField(max_length=20)
