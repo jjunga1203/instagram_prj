@@ -124,19 +124,22 @@
                     <p>회원님을 위한 추천</p>
                     <ul>
                         {% for following_user in user.followings.all %}
-                            <li>
-                                <div class="profile-pic">
-                                    {% if following_user.profile_url %}
-                                        <img src="{{user.profile_url}}" alt="프로필 사진">
-                                    {% else %}
-                                        <img src="{% static 'images/none_img.jpg' %}" alt="프로필 사진">
-                                    {% endif %}
-                                </div>
-                                <a href="{% url 'accounts:index' following_user.id %}" class="link-dark text-decoration-none">
-                                    <p class=username>{{ following_user.username }}</p>
-                                </a>
-                            </li>
+                            {% if forloop.counter <= 5 %}
+                                <li>
+                                    <div class="profile-pic">
+                                        {% if following_user.profile_url %}
+                                            <img src="{{ following_user.profile_url }}" alt="프로필 사진">
+                                        {% else %}
+                                            <img src="{% static 'images/none_img.jpg' %}" alt="프로필 사진">
+                                        {% endif %}
+                                    </div>
+                                    <a href="{% url 'accounts:index' following_user.id %}" class="link-dark text-decoration-none">
+                                        <p class=username>{{ following_user.username }}</p>
+                                    </a>
+                                </li>
+                            {% endif %}
                         {% endfor %}
+                    
                     </ul>
                 </div>
             </div>
