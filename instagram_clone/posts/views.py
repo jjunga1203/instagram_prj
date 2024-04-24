@@ -98,7 +98,9 @@ def delete(request, pk):
     post = Post.objects.get(pk=pk)
     if request.user == post.user:
         post.delete()
-    return redirect('posts:home')
+    
+    # 바로 인덱스 페이지로 리다이렉트합니다.
+    return redirect(reverse('accounts:index', kwargs={'user_idx': request.user.id}))
 
 def delete_comment(request, post_id, comment_id):
     comment = Comment.objects.get(pk=comment_id)
