@@ -109,7 +109,9 @@ def delete_comment(request, post_id, comment_id):
     return redirect('posts:detail', post_id)
 
 def create_comment_notification(user, post, comment_content):
-    message = f'{user.real_name}님이 회원님의 게시물에 댓글을 남겼습니다: {comment_content}'
+
+    # message = f'{user.real_name}님이 회원님의 게시물에 댓글을 남겼습니다: {comment_content}'
+    message = f'님이 회원님의 게시물에 댓글을 남겼습니다: {comment_content}'
     # Notification.objects.create(user=post.user, message=message, post=post)
     Notification.objects.create(user=post.user, message=message, post=post, msg_user_id=user.id, msg_user_real_name=user.real_name)
 
@@ -173,7 +175,8 @@ def edit_comment(request, pk):
     return render(request, 'posts/edit_comment.html', context)
 
 def create_like_notification(user, post):
-    message = f'{user.real_name}님이 회원님의 게시물을 좋아합니다.'
+    # message = f'{user.real_name}님이 회원님의 게시물을 좋아합니다.'
+    message = f'님이 회원님의 게시물을 좋아합니다.'
     # Notification.objects.create(user=post.user, message=message, post=post)
     Notification.objects.create(user=post.user, message=message, post=post, msg_user_id=user.id, msg_user_real_name=user.real_name)
 

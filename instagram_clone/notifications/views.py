@@ -14,6 +14,7 @@ def notifications(request):
         msg_user = User.objects.get(pk=notify.msg_user_id)
 
         contents.append( {
+            'real_name': msg_user.real_name,
             'user_img': msg_user.profile_url,
             'msg': notify.message,
             'created_at': notify.created_at,

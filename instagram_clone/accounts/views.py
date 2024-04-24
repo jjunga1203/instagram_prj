@@ -254,8 +254,9 @@ def search(request):
     return render(request, 'accounts/search.html', context)
 
 def create_newfollower_notification(user, followed_user):
-    message = f'{user.username}님이 회원님을 팔로우하기 시작했습니다.'
-    Notification.objects.create(user=followed_user, message=message)
+    # message = f'{user.username}님이 회원님을 팔로우하기 시작했습니다.'
+    message = f'님이 회원님을 팔로우하기 시작했습니다.'
+    Notification.objects.create(user=followed_user, message=message, msg_user_id=user.id, msg_user_real_name=user.real_name)
 
 @login_required
 def follow(request, user_idx):
