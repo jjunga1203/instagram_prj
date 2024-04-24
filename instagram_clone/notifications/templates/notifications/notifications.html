@@ -3,9 +3,9 @@
 <br><h3>[ 알림 ]</h3>
 {% for content in contents %}
     <div class="notification">
-        <table class='table-responsive'>
+        <table>
             <tr>
-                <td rowspan="3">
+                <td rowspan="3" padding: 10px;>
                     {% if content.user_img %}
                     <img class='search-profile-pic-img' src="{{ content.user_img }}" alt="프로필 사진">
                     {% else %}
@@ -18,7 +18,7 @@
             <tr>
                 <td><b>&nbsp;{{content.real_name}}</b> {{ content.msg }}<br>&nbsp;&nbsp;
                     {{ content.created_at }}</td>
-            </tr>
+         </tr>
         </table>
     </div>
 {% endfor %}
