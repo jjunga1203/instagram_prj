@@ -52,6 +52,15 @@
         display: flex;
         justify-content: flex-end; /* 오른쪽 정렬 */
     }
+    /* 댓글 입력란과 댓글 수정, 삭제 버튼을 한 덩이로 묶어줍니다. */
+    .comment-controls {
+        display: flex;
+        flex-direction: column;
+    }
+    /* 리스트 아이템에서 번호를 표시하지 않도록 설정합니다. */
+    .comment-controls li {
+        list-style-type: none;
+    }
 </style>
     <div class="instagram-post">
         
@@ -70,28 +79,38 @@
                 <div>
                     <p class="post-content">{{ post.content }}</p>
                 </div>
-                <div>
-                    <h6>comments ({{ comments|length }})</h6>
-                    <ol>
-                        {% if comments %}
-                            {% for comment in comments %}
-                                
-                                    <strong>{{ comment.user.username }}</strong> {{ comment.content }}
-                                    {% if request.user == comment.user %}
-                                        <a href='{% url "posts:edit_comment" pk=comment.pk %}' class="btn btn-link comment-action-link">댓글 수정</a>
-                                        <a href='{% url "posts:delete_comment" post_id=post.pk comment_id=comment.id %}' onclick="event.preventDefault(); if(confirm('정말로 삭제하시겠습니까?')){document.getElementById('delete-form-{{ comment.id }}').submit();}" class="btn btn-link comment-action-link">댓글 삭제</a>
-                                        <form id="delete-form-{{ comment.id }}" action='{% url "posts:delete_comment" post_id=post.pk comment_id=comment.id %}' method='POST' style="display: none;">
-                                            {% csrf_token %}
-                                            <input type="hidden" name="next" value="{{ request.path }}">
-                                        </form>
-                                    {% endif %}
-                                
-                            {% endfor %}
-                        {% else %}
-                            <p>댓글이 없습니다.</p>
-                        {% endif %}
-                    </ol>
-                </div>
+                 <!-- 댓글 목록 -->
+<div class="comments-section">
+    <ol>
+        {% for comment in post.comments.all %}
+            <div class="comment-controls"> <!-- 댓글과 댓글 작성, 삭제를 감싸는 div 추가 -->
+                <li>
+                    <strong>{{ comment.user.username }}</strong> {{ comment.content }}
+                    {% if request.user == comment.user %}
+                    <div> <!-- 댓글 수정, 삭제 버튼을 감싸는 div 추가 -->
+                        <a href='{% url "posts:edit_comment" pk=comment.pk %}' class="btn btn-link comment-action-link">댓글 수정</a>
+                        <a href='{% url "posts:delete_comment" post_id=post.pk comment_id=comment.id %}' onclick="event.preventDefault(); if(confirm('정말로 삭제하시겠습니까?')){document.getElementById('delete-form-{{ comment.id }}').submit();}" class="btn btn-link comment-action-link">댓글 삭제</a>
+                        <form id="delete-form-{{ comment.id }}" action='{% url "posts:delete_comment" post_id=post.pk comment_id=comment.id %}' method='POST' style="display: none;">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{{ request.path }}">
+                        </form>
+                    </div>
+                    {% endif %}
+                </li>
+            </div>
+        {% empty %}
+            <div>댓글이 없습니다.</div>
+        {% endfor %}
+    </ol>
+</div>
+<!-- 댓글 작성하기 -->
+<form action="{% url 'posts:create_comment' pk=post.pk %}" method="POST">
+    {% csrf_token %}
+    <div class="comment-controls"> <!-- 댓글 입력란과 버튼을 감싸는 div 추가 -->
+        <textarea name="content" rows="1" cols="25"></textarea>
+        <input type="submit" value="댓글 작성하기">
+    </div>
+</form>
             </div>
         </div>
         
