@@ -2,18 +2,27 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Post, Comment
 from accounts.models import User
 from stories.models import Story
+from notifications.models import Notification
 from .forms import PostForm, CommentForm
 from django.contrib.auth.decorators import login_required
 from django.core.files.storage import default_storage
 from django.utils.datastructures import MultiValueDictKeyError
 from django.db.models import Q
+from django.utils import timezone
+from datetime import timedelta
+from django.db.models import Count
 
 @login_required
 def home(request):
     user = get_object_or_404(User, pk=request.user.id)
     followings = user.followings.all()
     
-    stories = Story.objects.filter(user=user)
+    stories = Story.objects.filter(
+        Q(user__in=followings) | Q(user=user), 
+        created_at__gte=timezone.now() - timedelta(days=1)
+    )
+
+    user_grouped_stories = stories.values('user__id').annotate(num_stories=Count('id'))
     
     posts = Post.objects.filter(
         Q(user__in=followings) | Q(user=user)
@@ -21,7 +30,7 @@ def home(request):
     
     context = {
         'posts': posts,
-        'stories': stories,
+        'user_grouped_stories': user_grouped_stories,
     }
     return render(request, 'posts/home.html', context)
 
@@ -89,6 +98,10 @@ def delete_comment(request, post_id, comment_id):
         comment.delete()
     return redirect('posts:detail', post_id)
 
+def create_comment_notification(user, post, comment_content):
+    message = f'{user.username}님이 회원님의 게시물에 댓글을 남겼습니다: {comment_content}'
+    Notification.objects.create(user=post.user, message=message, post=post)
+
 def create_comment(request, pk):
     post = Post.objects.get(pk=pk)
     comment_form = CommentForm(request.POST)
@@ -97,7 +110,12 @@ def create_comment(request, pk):
         comment.post = post
         comment.user = request.user
         comment.save()
-        return redirect('posts:detail', pk)
+
+        # 댓글이 작성되었을 때 알림 생성
+        create_comment_notification(request.user, post, comment.content)
+
+        return redirect('posts:detail', pk=pk)
+
     context = {
         'post': post,
         'comment_form': comment_form
@@ -129,6 +147,10 @@ def edit_comment(request, pk):
     # 댓글 수정 템플릿을 렌더링합니다.
     return render(request, 'posts/edit_comment.html', context)
 
+def create_like_notification(user, post):
+    message = f'{user.username}님이 회원님의 게시물을 좋아합니다.'
+    Notification.objects.create(user=post.user, message=message, post=post)
+
 def post_like(request, post_id):
     post = Post.objects.get(pk=post_id)
     # 이미 좋아요를 한 사람의 경우에는 좋아요를 취소
@@ -136,6 +158,8 @@ def post_like(request, post_id):
         post.like_users.remove(request.user)
     else:
         post.like_users.add(request.user, through_defaults={'memo': '메모'})
+        # 좋아요 알림 생성
+        create_like_notification(request.user, post)
     return redirect('posts:home')
 
 def user_posts(request):

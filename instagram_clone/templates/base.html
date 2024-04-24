@@ -29,7 +29,7 @@
                 <img src="{% static "images/posts/messages.png" %}" class="icon" alt="messages">
                 <span class="text">Messages</span>
             </a>
-            <a href="#" class="icon-text"> <!-- Notifications -->
+            <a href={% url "notifications:notifications" %} class="icon-text"> <!-- Notifications -->
                 <img src="{% static "images/posts/notifications.png" %}" class="icon" alt="notifications">
                 <span class="text">Notifications</span>
             </a>

@@ -6,6 +6,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.views import LoginView
 
 from .models import User
+from notifications.models import Notification
 from posts.models import Post
 from django.db.models import Q 
 
@@ -221,6 +222,9 @@ def search(request):
     
     return render(request, 'accounts/search.html', context)
 
+def create_newfollower_notification(user, followed_user):
+    message = f'{user.username}님이 회원님을 팔로우하기 시작했습니다.'
+    Notification.objects.create(user=followed_user, message=message)
 
 @login_required
 def follow(request, user_idx):
@@ -231,8 +235,11 @@ def follow(request, user_idx):
         followed_user.followers.remove(user)
     else:
         followed_user.followers.add(user)
+        # 새로운 팔로워가 생겼을 때 알림 생성
+        create_newfollower_notification(user, followed_user)
         
     return redirect('accounts:index', user_idx=user_idx)
+
 
 # logout은 반드시 로그인 상태가 필수조건
 @login_required

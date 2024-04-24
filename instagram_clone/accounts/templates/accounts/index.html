@@ -53,7 +53,7 @@
             {% endif %}
         </form>
         {% endif %}  
-        </span>        
+       </span>        
     </div>
 
     <div style='display: flex; flex-direction: column; width:150px; padding: 5px 5px 5px 5px'>
@@ -75,12 +75,16 @@
                     {% endfor %}
                 </ul>
             </div>
-
         </span>
+
+        <!-- 보관함으로 이동 링크 -->
+        {% if request.user == user %}
+        <span>
+            <a href="{% url 'stories:archive' %}">보관함으로 이동</a>
+        </span>
+        {% endif %}
     </div>
 </div>
-
-
 
 <!-- 사용자가 작성한 글 목록 -->
 <h4>내가 작성한 글 목록</h4>
@@ -139,12 +143,12 @@
     <a href='{% url "posts:home" %}'>[홈으로]</a>
     
     
+
 {% endblock content %}
 
 
 
 {% block script %}
-
 <script>
     // 팔로잉 목록 보여주는 함수
     function showFollowingList() {
