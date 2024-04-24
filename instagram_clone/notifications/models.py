@@ -10,5 +10,8 @@ class Notification(models.Model):
     read = models.BooleanField(default=False)
     post = models.ForeignKey(Post, on_delete=models.CASCADE, null=True, blank=True)
 
+    msg_user_id = models.IntegerField()
+    msg_user_real_name = models.CharField(max_length=255)
+
     def __str__(self):
         return self.message

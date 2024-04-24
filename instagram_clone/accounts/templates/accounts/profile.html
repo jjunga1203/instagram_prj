@@ -1,12 +1,17 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h3>{{ request.user }} 프로필 페이지</h3>
+<form action="{% url "accounts:profile" %}" method='POST'>
+    {% csrf_token %}
+    {{ user.introduce }}
+</form>
 
+<h3>{{ user.real_name }} 프로필 페이지</h3>
 
 
 <!--기타 정보-->
-<p>자기소개 : {{ user.introduce }} </p>
+<p>자기소개 : 자기소개가 없습니다.</p> 
+{% comment %} {{ user.introduce }} </p> {% endcomment %}
 
 <p>
 {% if user.gender == 'F' %}
@@ -17,46 +22,98 @@
 성별 : 선택안함
 {% endif %}
 </p>
+
+
 {% if user.profile_url %}
+<div class="account-profile-pic">
 <img src="{{user.profile_url}}" alt="프로필 사진"  style="max-width: 10%;">
+</div>
 {% else %}
 {% load static %}
+<div class="account-profile-pic">
 <img src="{% static 'images/none_img.jpg' %}" alt="프로필 사진" width=50px> 
+</div>
 프로필 사진을 등록하세요.
 {% endif %}
-<br>
-<!-- add_box id 속성 추가 -->
-<span id="add_feed" class="material-icons-outlined"><a href="#" class='btn btn-primary btn-sm'>사진 변경</a></span>
+<!-- Button trigger modal -->
+<button id='pro_modal' type="button" class="btn btn-primary" data-toggle="modal" data-target="#ProfileModalCenter"  style="width: 150px;" >
+    프로필변경
+</button>
+
 <br>
 
-<!-- model id 속성 추가 -->
-<!-- create feed -->
-<div id="modal_add_feed" class="modal_overlay" style='display:none'> 
-    <div class="modal_profile_window">
-        <div class="modal_title">
-        <h3 align='center'>프로필 사진 바꾸기 
-            <span id="close_modal" class="material-icons-outlined">
-                <a href="#" class='btn btn-primary btn-sm'>취소</a>
-            </span>
-        </h3>
-        </div>
-        <br>
-        <div class="modal_content">
-            <div> 사진 업로드 </div>
-                <form method="post" action="{% url "accounts:upload_img" user.id %}" enctype="multipart/form-data">
-                {% csrf_token %}
-                <input type="file" name="profile_img">
-                <button type="submit" value='사진올리기' class='btn btn-primary btn-sm'>Upload</button>
-                </form>
-            <p>
-            <form class='delete_img' method='post' action="{% url "accounts:delete_img" user.id %}">
-                {% csrf_token %}
-                <button type="submit" value='사진삭제' class='btn btn-primary btn-sm'>현재 사진 삭제</button>
-            </form></p>
+
+
+  
+  <!-- Modal -->
+  <div class="modal fade" id="ProfileModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">프로필 편집</h5>
 
         </div>
+        <div class="modal-body">
+            {% comment %}         
+            <div class="modal_title">
+                <h3 align='center'>프로필 편집</h3>
+            </div> {% endcomment %}
+            <br>
+
+            <div class="modal_content">
+            <table>
+                <tbody>
+                    <tr>
+                        <td>사진변경</td>
+                        <td>
+                            <form method="post" action="{% url "accounts:upload_img" user.id %}" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <input type="file" name="profile_img">
+                                <button type="submit" value='사진올리기' class='btn btn-primary btn-sm'>Upload</button>
+                                </form>
+
+                        </td>
+  
+                    </tr>
+                    <tr>
+                        <td>&nbsp;</td></td>
+                        <td>
+                            <form class='delete_img' method='post' action="{% url "accounts:delete_img" user.id %}">
+                                {% csrf_token %}
+                                <button type="submit" value='사진삭제' class='btn btn-primary btn-sm'>현재 사진 삭제</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>자기소개</td>
+                        <td><input id='intro' type="text" size=40 placeholder='자기소개를 입력하세요' value={{user.introduce}}>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>성별</td>
+                        <td>
+                            <select id="gender">
+                                <option value="M">남성</option>
+                                <option value="W">여성</option>
+                                <option value="O">선택안함</option>
+                              </select>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" id='pro_close' class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id='change_pw' class="btn btn-primary">비밀번호 변경</button>
+          <button type="button" class="btn btn-primary">프로필 변경</button>    
+          {% comment %} id='save_change'  {% endcomment %}
+
+        </div>
+      </div>
     </div>
-</div>
+  </div>
 
 {% comment %} <span id="add_feed_pw" class="material-icons-outlined">비밀번호 변경</span> {% endcomment %}
 <br>
@@ -87,10 +144,56 @@
         </form>
     </div>
 </div>
+
 {% endblock content %}
 
 {% block script %}
 {% load static %}
 <script src="{% static 'js/accounts/profile.js' %}"></script>
+<script>
+// Launch demo modal 버튼을 클릭했을 때 실행되는 함수
+document.querySelector('#pro_modal').addEventListener('click', function() {
+    // 모달을 표시하는 부트스트랩의 modal 메서드 호출
+    $('#ProfileModalCenter').modal('show');
+});
 
+// close 버튼을 클릭했을 때 실행되는 함수
+document.querySelector('#pro_close').addEventListener('click', function() {
+    // 모달을 닫는 부트스트랩의 modal 메서드 호출
+    $('#ProfileModalCenter').modal('hide');
+});
+
+// 프로필 편집 클릭했을때
+document.querySelector('#save_change').addEventListener('click', function() {
+
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value
+    const strgender = document.querySelector('#gender').value
+    const strintroduce = document.querySelector('#intro').value
+
+    // event.preventDefault()
+    console.log(csrfToken)
+    console.log(document.querySelector('#gender').value)
+    console.log(document.querySelector('#intro').value)
+    const posturl = '/accounts/profile/{{user.id}}'
+
+    
+    axios.post(posturl, {
+        gender: strgender,
+        introduce: strintroduce,
+    }, {
+        headers: {
+            'X-CSRFToken': csrfToken,
+            'Content-Type': 'application/json'
+        },
+    })
+    .then(function (response) {
+        console.log(response);
+    })
+    .catch(function (error) {
+        console.error(error);
+    });
+});
+
+
+</script>
 {% endblock script %}

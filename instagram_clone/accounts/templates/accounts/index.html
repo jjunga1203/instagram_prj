@@ -114,13 +114,13 @@
 
 <h3>계정페이지 관리</h3>
 
-<div style='display: flex; flex-direction: row;'>
+<div style='display: flex; flex-direction: row;' class="profile" >
     <div style='padding: 5px 5px 5px 5px; '>
     {% if user.profile_url %}
-    <img src="{{user.profile_url}}" alt="프로필 사진" style='max-height:5%'>
+    <img class='index-profile-pic-img' src="{{user.profile_url}}" alt="프로필 사진"  style='width:50px'>
     {% else %}
     {% load static %}
-    <img src="{% static 'images/none_img.jpg' %}" alt="프로필 사진"style='max-height:5%'>
+    <img class='index-profile-pic-img' src="{% static 'images/none_img.jpg' %}" alt="프로필 사진" style='width:50px'>
     {% endif %}
     </div>
 
@@ -131,9 +131,9 @@
     </div>
 
     <div style='display: flex; flex-direction: column; width:200px; padding: 5px 5px 5px 5px'>
-        <span> 
+        <span > 
             {% if request.user == user %}
-            <a href='{% url "accounts:profile" user.id %}'>프로필 편집 </a>
+            <a class="btn btn-light text-decoration-none" href='{% url "accounts:profile" user.id %}'>프로필 편집 </a>
             {% else %}
             프로필 편집
             {% endif %}
@@ -142,13 +142,13 @@
         <span> 
         <!--팔로잉/팔로워 보여주기-->
         <p>
-            팔로잉 수: <a href="#" onclick="showFollowingList()">{{ following_count }}</a>
+            팔로잉 수: <a class="text-decoration-none" href="#" onclick="showFollowingList()">{{ following_count }}</a>
         </p>
         <div id="following_popup" style="display: none;">
             <p>팔로잉 목록</p>
             <ul>
                 {% for following_user in user.followings.all %}
-                    <li><a href="{% url 'accounts:index' user_idx=following_user.id %}">{{ following_user.username }}</a></li>
+                    <li><a class="btn btn-light text-decoration-none"  href="{% url 'accounts:index' user_idx=following_user.id %}">{{ following_user.username }}</a></li>
                 {% endfor %}
             </ul>
         </div>   
@@ -171,27 +171,29 @@
         <!-- add_box id 속성 추가 -->
         <span>
             {% if request.user == user %}
-            <a href="{% url "accounts:logout" %}">로그아웃</a>
+            <a class="btn btn-light text-decoration-none" href="{% url "accounts:logout" %}">로그아웃</a>
             {% else %}
             로그아웃
             {% endif %} 
         </span>
         <span>
-            <p>팔로워 수: <a href="#" onclick="showFollowerList()">{{ follower_count }}</a></p>
+            <p>팔로워 수: <a class="text-decoration-none" href="#" onclick="showFollowerList()">{{ follower_count }}</a></p>
             <div id="follower_popup" style="display: none;">
                 <p>팔로워 목록</p>
                 <ul>
                     {% for follower_user in user.followers.all %}
-                        <li><a href="{% url 'accounts:index' user_idx=follower_user.id %}">{{ follower_user.username }}</a></li>
+                        <li><a class="btn btn-light text-decoration-none" href="{% url 'accounts:index' user_idx=follower_user.id %}">{{ follower_user.username }}</a></li>
                     {% endfor %}
                 </ul>
             </div>
         </span>
+    </div>
 
+    <div style='display: flex; flex-direction: column; width:150px; padding: 5px 5px 5px 5px'>
         <!-- 보관함으로 이동 링크 -->
         {% if request.user == user %}
         <span>
-            <a href="{% url 'stories:archive' %}">보관함으로 이동</a>
+            <a class="btn btn-light text-decoration-none" href="{% url 'stories:archive' %}">보관함으로<br>이동</a>
         </span>
         {% endif %}
     </div>
@@ -200,6 +202,7 @@
 <!-- 사용자가 작성한 글 목록 -->
 <h4>내가 작성한 글 목록</h4>
 <hr>
+
 {% for post in user_posts %}
 <div class="instagram-post">
     <!-- 게시물 헤더 -->
@@ -275,6 +278,7 @@
 {% empty %}
     <p>작성한 글이 없습니다.</p>
 {% endfor %}
+
 
 
 {% endblock content %}

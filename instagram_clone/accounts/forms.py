@@ -35,7 +35,6 @@ class CustomUserCreationForm(UserCreationForm):
         }
 
 
-
 class CustomUserChangeForm(UserChangeForm):
     class Meta(UserChangeForm.Meta):
         model = get_user_model()
@@ -52,6 +51,7 @@ class CustomUserChangeForm(UserChangeForm):
             'is_notify' : '알림여부',
             # 'password' : '비밀번호',
         }
+
 
 class LoginForm(forms.Form):
     username = forms.CharField(

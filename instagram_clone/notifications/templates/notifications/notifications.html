@@ -1,9 +1,30 @@
 {% extends "base.html" %}
 {% block content %}
-{% for notification in notifications %}
+
+{% for content in contents %}
     <div class="notification">
-        <p>{{ notification.message }}</p>
-        <small>{{ notification.created_at }}</small>
+        <table>
+            <tr>
+                <td rowspan="3" padding: 10px;>
+                    {% if content.user_img %}
+                    <img class='search-profile-pic-img' src="{{ content.user_img }}" alt="프로필 사진">
+                    {% else %}
+                    {% load static %}
+                    <img class='search-profile-pic-img' src="{% static 'images/none_img.jpg' %}" alt="프로필 사진" width=30px> 
+                    {% endif %}
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>{{ content.msg }}</td>
+            </tr>
+            <tr>
+                <td>{{ content.created_at }}</td>
+            </tr>
+        </table>
     </div>
-    {% endfor %}
+{% endfor %}
+
+
 {% endblock content %}
+
