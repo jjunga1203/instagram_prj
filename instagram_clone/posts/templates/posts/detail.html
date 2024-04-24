@@ -1,57 +1,114 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h2>DETAIL</h2>
-    <h3>{{ post.pk }} 번째 글</h3>
-    <hr>
-    <p>작성자: {{ post.user }}</p>
+<style>
+    .instagram-post {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
     
-    <p>내용: {{ post.content }}</p>
-    {% if post.image %}
-        <img src="{{ post.image }}" alt="Post Image" style="max-width: 300px; max-height: 300px;">
-    {% endif %}
-    <hr>
-    {% if request.user == post.user %}
-        <a href='{% url "posts:update" pk=post.pk %}'>[수정하기]</a>
-        <hr>
-        <a href='#' onclick="confirmDeletePost('{{ post.pk }}')">[삭제하기]</a>
-        <hr>
-        <script>
-            function confirmDeletePost(postId) {
-                if (confirm("정말로 삭제하시겠습니까?")) {
-                    window.location.href = "{% url 'posts:delete' pk=post.pk %}";
-                }
-            }
-        </script>
-    {% endif %}
-    <h3>댓글 목록( {{ comments|length }} )</h3>
-    <ol>
-        {% if comments %}
-            {% for comment in comments %}
-                <li>
-                    <strong>{{ comment.user.username }}</strong> {{ comment.content }}
-                    {% if request.user == comment.user %}
-                    <a href='{% url "posts:edit_comment" pk=comment.pk %}'>[댓글 수정하기]</a>
-                    <a href='{% url "posts:delete_comment" post_id=post.pk comment_id=comment.id %}' onclick="event.preventDefault(); if(confirm('정말로 삭제하시겠습니까?')){document.getElementById('delete-form-{{ comment.id }}').submit();}">[댓글 삭제하기]</a>
-                    <form id="delete-form-{{ comment.id }}" action='{% url "posts:delete_comment" post_id=post.pk comment_id=comment.id %}' method='POST' style="display: none;">
-                        {% csrf_token %}
-                        <input type="hidden" name="next" value="{{ request.path }}">
-                    </form>
-                    {% endif %}
-                </li>
-            {% endfor %}
-        {% else %}
-                <div>댓글이 없습니다.</div>
-        {% endif %}
-    </ol>
-    <form action='{% url 'posts:create_comment' pk=post.pk %}' method='POST'>
-        {% csrf_token %}
-        {{ comment_form }}
-        <input type='submit' value='댓글 작성하기'>
-    </form>
-    <hr>
-    {% if request.META.HTTP_REFERER %}
-    | <a href="{{ request.META.HTTP_REFERER }}">[뒤로 가기]</a>
-    <a href='{% url "posts:home" %}'>[홈으로]</a>
-    {% endif %}
+    .post-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    
+    .profile-image {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+    
+    .username {
+        font-weight: bold;
+    }
+    
+    .post-image {
+        max-width: 100%;
+        height: auto;
+        margin-bottom: 10px;
+    }
+    
+    .post-content {
+        margin-bottom: 10px;
+    }
+    
+    .action-link {
+        margin-right: 10px;
+    }
+    
+    .comment-action-link {
+        font-size: 13px; /* 원하는 폰트 크기로 조정하세요 */
+    }
+   
+    .comment-submit-btn {
+        margin-top: 10px;
+    }
+
+    .post-actions {
+        display: flex;
+        justify-content: flex-end; /* 오른쪽 정렬 */
+    }
+</style>
+    <div class="instagram-post">
+        
+        <div class="post-body" style="display: flex;">
+            <div style="flex: 1;">
+                
+                {% if post.image %}
+                    <img class="post-image" src="{{ post.image }}" alt="Post Image">
+                {% endif %}
+                
+            </div>
+            <div style="flex: 1; padding-left: 20px;"> <!-- 오른쪽 내용 -->
+                <div>
+                    <p class="username">{{ post.user }}</p>
+                </div>    
+                <div>
+                    <p class="post-content">{{ post.content }}</p>
+                </div>
+                <div>
+                    <h6>comments ({{ comments|length }})</h6>
+                    <ol>
+                        {% if comments %}
+                            {% for comment in comments %}
+                                
+                                    <strong>{{ comment.user.username }}</strong> {{ comment.content }}
+                                    {% if request.user == comment.user %}
+                                        <a href='{% url "posts:edit_comment" pk=comment.pk %}' class="btn btn-link comment-action-link">댓글 수정</a>
+                                        <a href='{% url "posts:delete_comment" post_id=post.pk comment_id=comment.id %}' onclick="event.preventDefault(); if(confirm('정말로 삭제하시겠습니까?')){document.getElementById('delete-form-{{ comment.id }}').submit();}" class="btn btn-link comment-action-link">댓글 삭제</a>
+                                        <form id="delete-form-{{ comment.id }}" action='{% url "posts:delete_comment" post_id=post.pk comment_id=comment.id %}' method='POST' style="display: none;">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="next" value="{{ request.path }}">
+                                        </form>
+                                    {% endif %}
+                                
+                            {% endfor %}
+                        {% else %}
+                            <p>댓글이 없습니다.</p>
+                        {% endif %}
+                    </ol>
+                </div>
+            </div>
+        </div>
+        
+            <div class="post-actions">
+            {% if request.user == post.user %}
+                <a href='{% url "posts:update" pk=post.pk %}' class="btn btn-primary" style="margin-top: 10px;">게시글 수정</a>
+                &nbsp; <!-- 조금의 여백을 추가합니다. -->
+                <a href='#' onclick="confirmDeletePost('{{ post.pk }}')" class="btn btn-danger" style="margin-top: 10px;">게시글 삭제</a>
+                <hr>
+                <script>
+                    function confirmDeletePost(postId) {
+                        if (confirm("정말로 삭제하시겠습니까?")) {
+                            window.location.href = "{% url 'posts:delete' pk=post.pk %}";
+                        }
+                    }
+                </script>
+            {% endif %}
+            </div>
+    </div>
 {% endblock content %}
