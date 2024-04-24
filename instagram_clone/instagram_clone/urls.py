@@ -21,7 +21,8 @@ from accounts import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('posts/', include('posts.urls')),
-    # path('stories/', include('stories.urls')),
+    path('stories/', include('stories.urls')),
+    path('notifications/', include('notifications.urls')),
     # path('direct_msgs/', include('direct_msgs.urls')),
     path('accounts/', include('accounts.urls')),
  ]

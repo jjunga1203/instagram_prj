@@ -3,8 +3,10 @@ from .forms import CustomUserCreationForm, CustomUserChangeForm
 from django.contrib.auth.forms import AuthenticationForm, UserChangeForm, UserCreationForm, PasswordChangeForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
+from django.contrib.auth.views import LoginView
 
 from .models import User
+from notifications.models import Notification
 from posts.models import Post
 from django.db.models import Q 
 
@@ -18,7 +20,9 @@ from django.utils.datastructures import MultiValueDictKeyError
 
 from django.contrib.auth.hashers import check_password
 
+
 # Create your views here.
+@login_required
 def change_pw(request, user_idx):
     if not request.user.is_authenticated:
         return redirect('accounts:login')
@@ -38,33 +42,80 @@ def change_pw(request, user_idx):
     else:
         return redirect('accounts:profile', request.user.id)
 
-
+@login_required
 def index(request, user_idx):
     if not request.user.is_authenticated:
         return redirect('accounts:login')
 
     user = User.objects.get(pk=user_idx)
-    
+    # 사용자가 작성한 게시글 가져오기
+    user_posts = Post.objects.filter(user=user)
+        
     # 팔로잉 및 팔로워 수 계산
     following_count = user.followings.count() 
     follower_count = user.followers.count()   
-
-    # 사용자가 로그인되어 있는지 확인
-    if not request.user.is_authenticated:
-        return redirect('accounts:login')
 
     context = {
         'user': user,
         'following_count': following_count,
         'follower_count': follower_count,
+        'user_posts': user_posts,  # 사용자가 작성한 게시글을 컨텍스트에 추가
+
     } 
 
     return render(request, 'accounts/index.html', context)
 
-# 개인 프로파일 화면
+
+import json
+from django.http import JsonResponse
+
+# 개인 프로파일 화면 (편집모드로 띄우기)
+@login_required
 def profile(request, user_idx):
+    # 사용자가 로그인되어 있는지 확인
+    if not request.user.is_authenticated:
+        return redirect('accounts:login')
+  
     # 사용자 정보 가져오기
     user = User.objects.get(pk=user_idx)
+    print(user.id, user.pk)
+
+    if request.method == 'POST':
+        data = json.loads(request.body)
+
+        # JSON 데이터에서 'gender' 필드 값을 가져옵니다.
+        gender = data.get('gender')
+        introduce = data.get('introduce')
+
+        print(gender, introduce)
+        form = CustomUserChangeForm(data, instance=user)
+        print(form.username)
+        if form.is_valid():
+            print(form.username)
+            form.introduce = introduce
+            form.gender = gender
+
+            form.save()
+        else:
+            print('저장오류')
+        return redirect('accounts:profile', request.user.id)
+    else:
+        print(request.user)
+        
+        # user = CustomUserChangeForm(instance=user)
+    context = {
+        'user': user,
+    }
+
+    return render(request, 'accounts/profile.html', context) 
+
+
+# 개인 프로파일 화면 (편집모드로 띄우기)
+def old_profile(request, user_idx):
+    # 사용자 정보 가져오기
+    user = User.objects.get(pk=user_idx)
+    # 사용자가 작성한 게시글 가져오기
+    user_posts = Post.objects.filter(user=user)
     # 팔로잉 및 팔로워 수 계산
     following_count = user.followings.count() 
     follower_count = user.followers.count()   
@@ -72,17 +123,22 @@ def profile(request, user_idx):
     # 사용자가 로그인되어 있는지 확인
     if not request.user.is_authenticated:
         return redirect('accounts:login')
+  
 
     context = {
         'user': user,
         'following_count': following_count,
         'follower_count': follower_count,
+        'user_posts': user_posts,  # 사용자가 작성한 게시글을 컨텍스트에 추가
+
     } 
-    
+
+
     return render(request, 'accounts/profile.html', context) 
 
 
 # 사진 업로드
+@login_required
 def upload_img(request, user_idx):
     # form = UserChangeForm(request.user, request.POST)
     form = get_user_model().objects.get(pk=user_idx)
@@ -94,21 +150,16 @@ def upload_img(request, user_idx):
         filename = default_storage.save(file.name, file)
         file_url = default_storage.url(filename)
 
-        print(filename, file_url)
+        print(filename, file_url)   
         form.profile_url = file_url
         form.profile_img_name = filename
         form.save()
     else:
         print("No image file uploaded.")
-    
-    # context = {
-    #     'profile_url': file_url,
-    #     'profile_img_name' : filename,
-    # }
-    # return JsonResponse(context)
 
     return redirect('accounts:profile', request.user.id)
 
+@login_required
 def delete_img(request, user_idx):
     form = get_user_model().objects.get(pk=user_idx)
     default_storage.delete(form.profile_img_name)
@@ -144,17 +195,22 @@ def signup(request):
             print(form.errors)
             return redirect('accounts:signup')
     else:
-        print('3')
         form = CustomUserCreationForm()
         context = {
             'form':form
         }
     return render(request, 'accounts/signup.html', context)
 
+
+from django.contrib.auth import authenticate, login
+from django.shortcuts import render, redirect
+from .forms import LoginForm
+
+
 def login(request):
     # 이미 로그인한 경우, 정보화면으로 이동
     if request.user.is_authenticated:
-        return redirect('accounts:profile', request.user.id)
+        return redirect('accounts:index', request.user.id)
     
     # 로그인 시도
     # 세션을 생성! 하니까 POST
@@ -163,7 +219,7 @@ def login(request):
         if form.is_valid():
             auth_login(request, form.get_user())
             print(request.user.id)
-            return redirect('accounts:profile', request.user.id)
+            return redirect('accounts:index', request.user.id)
 
     form = AuthenticationForm()
     context = {
@@ -171,6 +227,7 @@ def login(request):
     }
     return render(request, 'accounts/login.html', context)
 
+@login_required
 def search(request):
     searched_users = None
     searched_posts = None
@@ -196,6 +253,9 @@ def search(request):
     
     return render(request, 'accounts/search.html', context)
 
+def create_newfollower_notification(user, followed_user):
+    message = f'{user.username}님이 회원님을 팔로우하기 시작했습니다.'
+    Notification.objects.create(user=followed_user, message=message)
 
 @login_required
 def follow(request, user_idx):
@@ -206,8 +266,11 @@ def follow(request, user_idx):
         followed_user.followers.remove(user)
     else:
         followed_user.followers.add(user)
+        # 새로운 팔로워가 생겼을 때 알림 생성
+        create_newfollower_notification(user, followed_user)
         
-    return redirect('accounts:profile', user_idx=user_idx)
+    return redirect('accounts:index', user_idx=user_idx)
+
 
 # logout은 반드시 로그인 상태가 필수조건
 @login_required

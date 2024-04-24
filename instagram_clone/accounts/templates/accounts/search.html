@@ -3,21 +3,33 @@
 {% block content %}
     <h2>사용자 또는 태그 검색</h2>
     <form method="GET" action="{% url 'accounts:search' %}">
-        <input type="text" name="search_keyword" placeholder="사용자 ID, 별명, 또는 실명 입력">
-        <button type="submit">검색</button>
+        <input class='btn btn-light text-start' type="text" name="search_keyword" size=40 placeholder="사용자 ID, 별명, 또는 실명 입력">
+        <button class='btn btn-primary' type="submit">검색</button>
     </form>
-
+    <br>
 {% if searched_users %}
-    <h3>검색 결과:</h3>
+    {% comment %} <h3>검색 결과:</h3> {% endcomment %}
+
     <ul>
         {% for user in searched_users %}
-            <li>
-                <a href="{% url 'accounts:profile' user_idx=user.id %}">아이디: {{user.username}} 사용자명: {{ user.alias_name }} 이름: {{ user.real_name }}</a>
-            </li>
+        <li>
+
+                {% if user.profile_url %}
+                <img class='search-profile-pic-img' src="{{user.profile_url}}" alt="프로필 사진">
+                {% else %}
+                {% load static %}
+                <img class='search-profile-pic-img' src="{% static 'images/none_img.jpg' %}" alt="프로필 사진" width=30px> 
+                {% endif %}
+
+
+                <a class="link-dark link-offset-2 link-underline-opacity-0 link-underline-opacity-100-hover" href="{% url 'accounts:index' user_idx=user.id %}">
+                    {{ user.alias_name }}</a>
+        </li>
         {% endfor %}
     </ul>
 {% elif searched_posts %}
-    <h3>검색 결과:</h3>
+
+    {% comment %} <h3>검색 결과:</h3> {% endcomment %}
         <ul>
             {% for post in searched_posts %}
             <div class="post">

@@ -1,13 +1,17 @@
 {% extends 'base.html' %}
 {% block content %}
 {% load static %}
+
 <!--메인 섹션-->
 <div class="stories">
-    <div class="stories-card">
-        <div class="profile-pic"><img src={% static "images/posts/avatar.png" %}></div>
-        <p class="username">user_name_1</p>
-    </div>
+    {% for group in user_grouped_stories %}
+    <a href="{% url 'stories:detail' group.user__id %}" class="stories-card">
+        <div class="profile-pic"><img src="{% static 'images/posts/avatar.png' %}" class="profile-pic"></div>
+        <p class="username">{{ group.user__username }}이름</p>
+    </a>
+    {% endfor %}
 </div>
+
 
 <div class="posts">
     {% for post in posts %}
@@ -18,21 +22,25 @@
                 <p class="username">{{ post.user.username }}</p>
             </div>
         </div>
-        <img src="{% static 'images/posts/home.png' %}" class="post-image" alt="">
+        <img src="{{ post.image }}" class="post-image" alt="">
         <div class="post-content">
             <div class="reaction-wrapper">
-                <img src="{% static 'images/posts/notifications.png' %}" class="icon" alt="">
+                <img src="{% static 'images`/posts/notifications.png' %}" class="icon" alt="">
             </div>
             <p class="likes">{{ post.like_users.count }} likes</p>
             <p class="description"><span>{{ post.user.username }}</span> {{ post.content }}</p>
             <p class="post-time">{{ post.created_at }}</p>
         </div>
         <div class="comment-wrapper">
-            <input type="text" class="comment-box" placeholder="Add a comment">
-            <button class="comment-btn">post</button>
+            <form action='{% url 'posts:create_comment' pk=post.pk %}' method='POST'>
+                {% csrf_token %}
+                {{ comment_form }}``
+                <input type='text' class="comment-box" placeholder='댓글 작성하기'>
+                <button class="comment-btn">작성</button>
+            </form>
+            
         </div>
     </div>
     {% endfor %}
 </div>
 {% endblock content %}
-{% block login %}{% endblock login %}

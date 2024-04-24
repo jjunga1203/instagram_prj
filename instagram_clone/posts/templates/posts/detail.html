@@ -1,42 +1,133 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h2>DETAIL</h2>
-    <h3>{{ post.pk }} 번째 글</h3>
-    <hr>
-    <p>작성자: {{ post.user }}</p>
-    <p>제목: {{ post.title }}</p>
-    <p>내용: {{ post.content }}</p>
-    <hr>
-    {% if request.user == post.user %}
-        <a href='{% url "posts:update" pk=post.pk %}'>[수정하기]</a>
-        <hr>
-        <a href='{% url "posts:delete" pk=post.pk %}'>[삭제하기]</a>
-        <hr>
-    {% endif %}
-    <h3>댓글 목록( {{ comments|length }} )</h3>
+<style>
+    .instagram-post {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .post-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    
+    .profile-image {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+    
+    .username {
+        font-weight: bold;
+    }
+    
+    .post-image {
+        max-width: 100%;
+        height: auto;
+        margin-bottom: 10px;
+    }
+    
+    .post-content {
+        margin-bottom: 10px;
+    }
+    
+    .action-link {
+        margin-right: 10px;
+    }
+    
+    .comment-action-link {
+        font-size: 13px; /* 원하는 폰트 크기로 조정하세요 */
+    }
+   
+    .comment-submit-btn {
+        margin-top: 10px;
+    }
+
+    .post-actions {
+        display: flex;
+        justify-content: flex-end; /* 오른쪽 정렬 */
+    }
+    /* 댓글 입력란과 댓글 수정, 삭제 버튼을 한 덩이로 묶어줍니다. */
+    .comment-controls {
+        display: flex;
+        flex-direction: column;
+    }
+    /* 리스트 아이템에서 번호를 표시하지 않도록 설정합니다. */
+    .comment-controls li {
+        list-style-type: none;
+    }
+</style>
+    <div class="instagram-post">
+        
+        <div class="post-body" style="display: flex;">
+            <div style="flex: 1;">
+                
+                {% if post.image %}
+                    <img class="post-image" src="{{ post.image }}" alt="Post Image">
+                {% endif %}
+                
+            </div>
+            <div style="flex: 1; padding-left: 20px;"> <!-- 오른쪽 내용 -->
+                <div>
+                    <p class="username">{{ post.user }}</p>
+                </div>    
+                <div>
+                    <p class="post-content">{{ post.content }}</p>
+                </div>
+                 <!-- 댓글 목록 -->
+<div class="comments-section">
     <ol>
-        {% if comments %}
-            {% for comment in comments %}
+        {% for comment in post.comments.all %}
+            <div class="comment-controls"> <!-- 댓글과 댓글 작성, 삭제를 감싸는 div 추가 -->
                 <li>
-                    {{ comment.content }}
+                    <strong>{{ comment.user.username }}</strong> {{ comment.content }}
                     {% if request.user == comment.user %}
-                        <form action=' {% url "posts:delete_comment" post_id=post.pk comment_id=comment.id %}' method='POST'>
+                    <div> <!-- 댓글 수정, 삭제 버튼을 감싸는 div 추가 -->
+                        <a href='{% url "posts:edit_comment" pk=comment.pk %}' class="btn btn-link comment-action-link">댓글 수정</a>
+                        <a href='{% url "posts:delete_comment" post_id=post.pk comment_id=comment.id %}' onclick="event.preventDefault(); if(confirm('정말로 삭제하시겠습니까?')){document.getElementById('delete-form-{{ comment.id }}').submit();}" class="btn btn-link comment-action-link">댓글 삭제</a>
+                        <form id="delete-form-{{ comment.id }}" action='{% url "posts:delete_comment" post_id=post.pk comment_id=comment.id %}' method='POST' style="display: none;">
                             {% csrf_token %}
-                            <input type='submit' value='댓글 삭제하기'>
+                            <input type="hidden" name="next" value="{{ request.path }}">
                         </form>
+                    </div>
                     {% endif %}
                 </li>
-            {% endfor %}
-        {% else %}
-                <div>댓글이 없습니다.</div>
-        {% endif %}
+            </div>
+        {% empty %}
+            <div>댓글이 없습니다.</div>
+        {% endfor %}
     </ol>
-    <form action='{% url 'posts:create_comment' pk=post.pk %}' method='POST'>
-        {% csrf_token %}
-        {{ comment_form }}
-        <input type='submit' value='댓글 작성하기'>
-    </form>
-    <hr>
-    <a href='{% url "posts:home" %}'>[back]</a>
+</div>
+<!-- 댓글 작성하기 -->
+<form action="{% url 'posts:create_comment' pk=post.pk %}" method="POST">
+    {% csrf_token %}
+    <div class="comment-controls"> <!-- 댓글 입력란과 버튼을 감싸는 div 추가 -->
+        <textarea name="content" rows="1" cols="25"></textarea>
+        <input type="submit" value="댓글 작성하기">
+    </div>
+</form>
+            </div>
+        </div>
+        
+            <div class="post-actions">
+            {% if request.user == post.user %}
+                <a href='{% url "posts:update" pk=post.pk %}' class="btn btn-primary" style="margin-top: 10px;">게시글 수정</a>
+                &nbsp; <!-- 조금의 여백을 추가합니다. -->
+                <a href='#' onclick="confirmDeletePost('{{ post.pk }}')" class="btn btn-danger" style="margin-top: 10px;">게시글 삭제</a>
+                <hr>
+                <script>
+                    function confirmDeletePost(postId) {
+                        if (confirm("정말로 삭제하시겠습니까?")) {
+                            window.location.href = "{% url 'posts:delete' pk=post.pk %}";
+                        }
+                    }
+                </script>
+            {% endif %}
+            </div>
+    </div>
 {% endblock content %}

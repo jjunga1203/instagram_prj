@@ -17,27 +17,56 @@
         {% block navbar %}
         <div id="navbar-section" class="grid-item">
             <img src="{% static "images/posts/logoimg.png" %}" class="logo" alt="logo">
-            <a href="{% url 'posts:home' %}" class="icon-text"> <!-- Home -->
+
+            <a class="btn btn-light text-decoration-none text-start" href="{% url 'posts:home' %}" class="icon-text"> <!-- Home -->
                 <img src="{% static "images/posts/home.png" %}" class="icon" alt="home">
                 <span class="text">Home</span>
             </a>
-            <a href="{% url 'accounts:search' %}" class="icon-text"> <!-- Search -->
+            <br>
+            <a class="btn btn-light text-decoration-none text-start" href="{% url 'accounts:search' %}" class="icon-text"> <!-- Search -->
                 <img src="{% static "images/posts/search.png" %}" class="icon" alt="search">
                 <span class="text">Search</span>
             </a>
-            <a href="#" class="icon-text"> <!-- Messages -->
+            <br>
+            <a class="btn btn-light text-decoration-none text-start" href="#" class="icon-text"> <!-- Messages -->
                 <img src="{% static "images/posts/messages.png" %}" class="icon" alt="messages">
                 <span class="text">Messages</span>
             </a>
-            <a href="#" class="icon-text"> <!-- Notifications -->
+            <br>
+            <a class="btn btn-light text-decoration-none text-start" href={% url "notifications:notifications" %} class="icon-text"> <!-- Notifications -->
                 <img src="{% static "images/posts/notifications.png" %}" class="icon" alt="notifications">
                 <span class="text">Notifications</span>
             </a>
-            <a href="{% url 'posts:create' %}" class="icon-text"> <!-- Create -->
+            <br>
+            <!-- 모달 열기 버튼 -->
+            <button type="button" id='btn-primary' class="btn btn-light text-decoration-none text-start" data-toggle="modal" data-target="#BaseModalCenter"><!-- Create -->
                 <img src="{% static "images/posts/create.png" %}" class="icon" alt="create">
                 <span class="text">Create</span>
-            </a>
-            <a href="{% url 'accounts:index' user_idx=request.user.id %}" class="icon-text"> <!-- Profile -->
+            </button>
+
+            <!-- 모달 창 변경 (최희정)-->
+              <!-- Modal -->
+            <div class="modal fade" id="BaseModalCenter" tabindex="-1" role="dialog" aria-labelledby="BaseModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">피드 선택</h5>
+                    </div>
+
+                    <div class="modal-footer">
+                    <a href="{% url 'posts:create' %}" class="btn btn-primary text-decoration-none">Upload Post</a>
+                    <a href="{% url 'stories:create' %}" class="btn btn-primary text-decoration-none">Upload Story</a>
+                    <button type="button" id='close' class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <!-- 모달 창 -->
+
+            <br>
+            <a class="btn btn-light text-decoration-none text-start" href="{% url 'accounts:index' user_idx=request.user.id %}" class="icon-text"> <!-- Profile -->
+
                 <img src="{% static "images/posts/avatar.png" %}" class="icon" alt="profile">
                 <span class="text">Profile</span>
             </a>
@@ -47,18 +76,30 @@
         {% block content %}
         {% endblock content %}
         </div>
+
     </div>    
-    
-    {% block login %}
-    {% if user.is_authenticated %}
-    <input type="button" onclick="location.href='{% url "accounts:logout" %}'" value='LOGOUT' class="btn btn-outline-secondary"/>
-    {% else %}
-        <input type="button" onclick="location.href='{% url "accounts:login" %}'" value='LOGIN' class="btn btn-outline-secondary"/>
-        <input type="button" onclick="location.href='{% url "accounts:signup" %}'" value='SIGNUP' class="btn btn-outline-secondary"/>
-    {% endif %}
-    {% endblock login %}
+
+
     {% block logincontent %}
     {% endblock logincontent %}
+
+    <script>
+
+
+        // Launch demo modal 버튼을 클릭했을 때 실행되는 함수
+        document.querySelector('#btn-primary').addEventListener('click', function() {
+            // 모달을 표시하는 부트스트랩의 modal 메서드 호출
+            $('#BaseModalCenter').modal('show');
+        });
+
+        // close 버튼을 클릭했을 때 실행되는 함수
+        document.querySelector('#close').addEventListener('click', function() {
+            // 모달을 닫는 부트스트랩의 modal 메서드 호출
+            $('#BaseModalCenter').modal('hide');
+        });
+
+    </script>
+    
 
     {% block script %}
     {% endblock script %}
