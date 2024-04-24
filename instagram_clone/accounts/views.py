@@ -53,10 +53,6 @@ def index(request, user_idx):
     following_count = user.followings.count() 
     follower_count = user.followers.count()   
 
-    # 사용자가 로그인되어 있는지 확인
-    if not request.user.is_authenticated:
-        return redirect('accounts:login')
-
     context = {
         'user': user,
         'following_count': following_count,
