@@ -21,7 +21,7 @@
                         </div>
 
                         <a href="{% url 'stories:detail' group.user__id %}" class="link-dark text-decoration-none">
-                        <p class="username">{{ group.user__alias_name }}</p>
+                        <p class="username">{{ group.user__username }}</p>
                         </a>
 
                     </div>
@@ -43,7 +43,7 @@
                                         <img src="{% static 'images/none_img.jpg' %}" alt="프로필 사진">
                                         {% endif %}
                                     </div>
-                                    <p class="username">{{ post.user.alias_name }}</p>
+                                    <p class="username">{{ post.user.username }}</p>
                                 </a>
                                 <p class="username"> • {{ time_since_created }}</p>
                             </div>
@@ -116,7 +116,7 @@
                         {% endif %}
                     </div>
                     <a href="{% url 'accounts:index' user.id %}" class="link-dark text-decoration-none">
-                        <p class="username">{{ user.alias_name }}</p>
+                        <p class="username">{{ user.username }}</p>
                     </a>
                 </div>                
             
@@ -134,7 +134,7 @@
                                         {% endif %}
                                     </div>
                                     <a href="{% url 'accounts:index' following_user.id %}" class="link-dark text-decoration-none">
-                                        <p class=username>{{ following_user.alias_name }}</p>
+                                        <p class=username>{{ following_user.username }}</p>
                                     </a>
                                 </li>
                             {% endif %}
