@@ -1,8 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-
-<<<<<<< HEAD
 <div class="posts">
     <div class="post-home">
         <div class="info">
@@ -34,8 +32,6 @@
             <strong><p class="likes">좋아요 {{ post.like_users.count }}개</p></strong>
             <p class="description"><span><strong>{{ post.user.username }}</strong></span> {{ post.content }}</p>
         </div>
-        
-<<<<<<< HEAD
         {% if request.user == post.user %}
         <div class="d-flex justify-content-end">
             <a href='{% url "posts:update" pk=post.pk %}' class="btn btn-primary text-decoration-none">수정</a>
@@ -48,17 +44,12 @@
             <ul class="list-group">
                 {% for comment in post.comments.all %}
                     <li class="list-group-item">
-                        <div id="comment-{{ comment.pk }}" class="d-flex justify-content-between"> <!-- 수정한 부분 -->
-                            <div>
-                                <strong>{{ comment.user.username }}</strong> 
-                                <span id="comment-content-{{ comment.pk }}">{{ comment.content }}</span>
-                            </div>
+                        <div id="comment-{{ comment.pk }}">
+                            <strong>{{ comment.user.username }}</strong>
+                            <span id="comment-content-{{ comment.pk }}">{{ comment.content }}</span>
                             {% if request.user == comment.user %}
-                            <span> <!-- 수정한 부분 -->
-                                {% csrf_token %}
-                                <button class="btn btn-primary btn-sm text-decoration-none" id="edit-comment-btn" data-comment-id="{{ comment.pk }}">수정</button>
-                                <button class="btn btn-secondary btn-sm text-decoration-none" id="delete-comment-btn" data-post-id="{{ post.pk }}" data-comment-id="{{ comment.pk }}">삭제</button>
-                            </span>
+                            <button class="btn btn-primary text-decoration-none" data-comment-id="{{ comment.pk }}">수정</button>
+                            <button class="btn btn-secondary text-decoration-none" data-post-id="{{ post.pk }}" data-comment-id="{{ comment.pk }}">삭제</button>
                             {% endif %}
                         </div>
                     </li>
@@ -75,24 +66,17 @@
                 &nbsp;
                 <button type="submit" class="btn btn-secondary text-decoration-none" style="width: 130px; height: auto;">댓글 작성</button> <!-- 높이를 자동으로 조절 -->
             </form>
-
-</div>
+            </div>
         </div>
     </div>
 </div>
-
 {% endblock content %}
-
 {% block script %}
-    <script src="{% static 'js/posts/comments.js' %}"></script>
-    <script>
-      function openModal(modalId) {
-        var modal = document.getElementById(modalId);
-        modal.style.display = "block";
-      }
-      function closeModal(modalId) {
-        var modal = document.getElementById(modalId);
-        modal.style.display = "none";
-      }
-    </script>
+<script>
+    function confirmDeletePost(postId) {
+        if (confirm("정말로 삭제하시겠습니까?")) {
+            window.location.href = "{% url 'posts:delete' pk=post.pk %}";
+        }
+    }
+</script>
 {% endblock script %}

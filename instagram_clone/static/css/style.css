@@ -344,9 +344,9 @@ ul{
 
 
 .index-profile-pic-img {
-    width: 60px; /* Adjust profile picture size */
-
-    border-radius: 50%; /* Make profile picture circular */
+    /* width: 60px; Adjust profile picture size */
+    height: auto;
+    border-radius: 30%; /* Make profile picture circular */
     object-fit: cover; /* Maintain aspect ratio */
     margin-bottom: 10px; /* Add space below profile picture */
 }
@@ -359,3 +359,17 @@ ul{
     margin-bottom: 10px; /* Add space below profile picture */
 }
 
+.resize_img {
+    width: auto;
+    height: auto;
+    max-width: 200px;
+    max-height: 200px;
+    display: block;
+    margin: auto;
+}
+
+.square-container {
+    width: 100%; /* 원하는 가로 크기 */
+    height: 100%; /* 원하는 세로 크기 */
+    overflow: hidden;
+}

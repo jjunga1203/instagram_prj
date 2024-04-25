@@ -15,32 +15,32 @@
     <div class="grid-container">
         {% block navbar %}
         <div id="navbar-section" class="grid-item">
-            <img src="{% static 'images/posts/logo.png' %}" alt="Instagram Logo" class="logo-instagram" style='width:100px;'>
+            <img src="{% static "images/posts/logoimg.png" %}" class="logo" alt="logo">
 
             <a class="btn btn-light text-decoration-none text-start" href="{% url 'posts:home' %}" class="icon-text"> <!-- Home -->
                 <img src="{% static "images/posts/home.png" %}" class="icon" alt="home">
-                <span class="text">홈</span>
+                <span class="text">Home</span>
             </a>
             <br>
             <a class="btn btn-light text-decoration-none text-start" href="{% url 'accounts:search' %}" class="icon-text"> <!-- Search -->
                 <img src="{% static "images/posts/search.png" %}" class="icon" alt="search">
-                <span class="text">검색</span>
+                <span class="text">Search</span>
             </a>
             <br>
             <a class="btn btn-light text-decoration-none text-start" href="#" class="icon-text"> <!-- Messages -->
                 <img src="{% static "images/posts/messages.png" %}" class="icon" alt="messages">
-                <span class="text">메시지</span>
+                <span class="text">Messages</span>
             </a>
             <br>
             <a class="btn btn-light text-decoration-none text-start" href={% url "notifications:notifications" %} class="icon-text"> <!-- Notifications -->
                 <img src="{% static "images/posts/notifications.png" %}" class="icon" alt="notifications">
-                <span class="text">알림</span>
+                <span class="text">Notifications</span>
             </a>
             <br>
             <!-- 모달 열기 버튼 -->
             <button type="button" id='btn-primary' class="btn btn-light text-decoration-none text-start" data-toggle="modal" data-target="#BaseModalCenter"><!-- Create -->
                 <img src="{% static "images/posts/create.png" %}" class="icon" alt="create">
-                <span class="text">만들기</span>
+                <span class="text">Create</span>
             </button>
 
             <!-- 모달 창 변경 (최희정)-->
@@ -49,13 +49,13 @@
                 <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">작성 선택</h5>
+                    <h5 class="modal-title" id="exampleModalLongTitle">피드 선택</h5>
                     </div>
 
                     <div class="modal-footer">
-                    <a href="{% url 'posts:create' %}" class="btn btn-primary text-decoration-none">포스트 올리기</a>
-                    <a href="{% url 'stories:create' %}" class="btn btn-primary text-decoration-none">스토리 올리기</a>
-                    <button type="button" id='close' class="btn btn-secondary" data-dismiss="modal">닫기</button>
+                    <a href="{% url 'posts:create' %}" class="btn btn-primary text-decoration-none">Upload Post</a>
+                    <a href="{% url 'stories:create' %}" class="btn btn-primary text-decoration-none">Upload Story</a>
+                    <button type="button" id='close' class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
                 </div>
                 </div>

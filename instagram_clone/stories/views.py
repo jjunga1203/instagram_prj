@@ -45,23 +45,14 @@ def detail(request, pk):
     }
     return render(request, 'stories/detail.html', context)
 
-# 삭제만 가능한 수정 기능
+# 상세 페이지 열기
 def edit(request, pk):
+    # user = get_object_or_404(get_user_model(), pk=pk)
     story = Story.objects.get(pk=pk)
-    print(request.user.id)
 
     context = {
         'story': story,
     }
-
-    if request.method == 'POST':
-        form = StoryForm(request.POST, request.FILES, instance=story)  # request.FILES 추가
-        if form.is_valid():
-            form.save()
-            return redirect('stories:edit', story.pk)
-        
-        return render(request, 'stories/edit.html', context)
-
     return render(request, 'stories/edit.html', context)
 
 
@@ -71,6 +62,15 @@ def delete(request, pk):
     story.is_expired = True
     story.save()
     return redirect('post:home')
+
+def story_delete(request, pk):
+    story = get_object_or_404(Story, pk=pk)
+    if request.user == story.user:
+        story.delete()
+
+    # 바로 인덱스 페이지로 리다이렉트합니다.
+    return redirect('stories:archive')
+    
 
 @login_required
 def archive(request):
