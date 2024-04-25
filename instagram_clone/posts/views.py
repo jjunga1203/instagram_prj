@@ -221,7 +221,7 @@ def post_like(request, post_id):
         post.like_users.add(request.user, through_defaults={'memo': '메모'})
         # 좋아요 알림 생성
         create_like_notification(request.user, post)
-    return redirect('posts:home')
+    return redirect(request.META.get('HTTP_REFERER'))
 
 def user_posts(request):
     # 현재 사용자가 작성한 모든 글을 가져옴
