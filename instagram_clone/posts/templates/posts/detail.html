@@ -2,7 +2,6 @@
 {% load static %}
 {% block content %}
 
-<<<<<<< HEAD
 <div class="posts">
     <div class="post-home">
         <div class="info">
@@ -35,7 +34,6 @@
             <p class="description"><span><strong>{{ post.user.username }}</strong></span> {{ post.content }}</p>
         </div>
         
-<<<<<<< HEAD
         {% if request.user == post.user %}
         <div class="d-flex justify-content-end">
             <a href='{% url "posts:update" pk=post.pk %}' class="btn btn-primary text-decoration-none">수정</a>

@@ -8,7 +8,7 @@ from django.contrib.auth.views import LoginView
 from .models import User
 from notifications.models import Notification
 from posts.models import Post
-from django.db.models import Q 
+from django.db.models import Q
 
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import update_session_auth_hash
