@@ -18,6 +18,13 @@ from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.views.decorators.http import require_POST
 
+from django.shortcuts import render, get_object_or_404
+from django.db.models import Count, Q
+from django.utils import timezone
+from datetime import timedelta
+from .models import Post, Comment
+from .forms import CommentForm
+
 @login_required
 def home(request):
     user = get_object_or_404(User, pk=request.user.id)
@@ -71,11 +78,12 @@ def home(request):
     return render(request, 'posts/home.html', context)
 
 
+
 @login_required
 def create(request):
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
-        form = PostForm(request.POST, request.FILES)
+
         if form.is_valid():
             # 이미지를 S3에 업로드
             if 'image' in request.FILES:

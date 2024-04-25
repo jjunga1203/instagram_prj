@@ -1,4 +1,3 @@
-// 이 함수는 Django 템플릿에서 생성된 CSRF 토큰을 가져옵니다.
 function getCSRFToken() {
     const csrfTokenInput = document.querySelector('input[name="csrfmiddlewaretoken"]');
     if (csrfTokenInput) {
@@ -7,13 +6,11 @@ function getCSRFToken() {
         return null; // 토큰을 찾을 수 없는 경우 예외 처리
     }
 }
-
-document.querySelectorAll('.edit-comment-btn').forEach(function(btn) {
+document.querySelectorAll('[id^="edit-comment-btn"]').forEach(function(btn) {
     btn.addEventListener('click', function() {
         let commentId = this.getAttribute('data-comment-id');
         let commentContent = document.getElementById('comment-content-' + commentId).innerText;
         let newContent = prompt('댓글 수정', commentContent);
-
         // Send AJAX request to update comment
         if (newContent !== null) {
             fetch('/posts/edit_comment/' + commentId + '/', {
@@ -39,9 +36,8 @@ document.querySelectorAll('.edit-comment-btn').forEach(function(btn) {
         }
     });
 });
-
 // Add event listeners for delete comment buttons
-document.querySelectorAll('.delete-comment-btn').forEach(function(btn) {
+document.querySelectorAll('[id^="delete-comment-btn"]').forEach(function(btn) {
     btn.addEventListener('click', function() {
         let postId = this.getAttribute('data-post-id');
         let commentId = this.getAttribute('data-comment-id');
@@ -67,7 +63,6 @@ document.querySelectorAll('.delete-comment-btn').forEach(function(btn) {
                 console.error('Error:', error);
                 alert('댓글 삭제에 실패했습니다.');
             });
-            
         }
     });
 });
