@@ -72,6 +72,15 @@ def delete(request, pk):
     story.save()
     return redirect('post:home')
 
+def story_delete(request, pk):
+    story = get_object_or_404(Story, pk=pk)
+    if request.user == story.user:
+        story.delete()
+
+    # 바로 인덱스 페이지로 리다이렉트합니다.
+    return redirect('stories:archive')
+    
+
 @login_required
 def archive(request):
     user = request.user

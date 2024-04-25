@@ -2,7 +2,9 @@
 {% load static %}
 {% block content %}
 <div class="container">
+    <img style="width:300px; height:400px" src="{% static 'images/insta_login_img.PNG' %}" alt="phone" class="phone-img">
     <div class="login-box">
+        
         <img src="{% static 'images/posts/logo.png' %}" alt="Instagram Logo" class="logo-instagram">
         <form action='{% url "accounts:login" %}' method='POST'>
             {% csrf_token %}

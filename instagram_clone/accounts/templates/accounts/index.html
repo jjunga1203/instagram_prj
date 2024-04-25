@@ -127,8 +127,8 @@
 
     <div style='display: flex; flex-direction: column; width:150px; padding: 5px 5px 5px 5px'>
         <span> {{ user.alias_name }} </span>
-        <span> 게시물 </span>
-        <span>{{user.real_name }}</span>
+        <span> </span>
+        <span> </span>
     </div>
 
     <div style='display: flex; flex-direction: column; width:200px; padding: 5px 5px 5px 5px'>
@@ -205,11 +205,14 @@
 <h4>내가 작성한 글 목록</h4>
 <hr>
 <div style='width:600px; '>
-<div class="container align-items-start" >
+<div class="container justify-content-start align-items-start" >
     <div class="row flex-wrap">
       {% for post in user_posts %}
-        <div class="col-4 px-0 d-flex ">
-            <a href="{% url "posts:detail" post.id %}"><img class="img-fluid" style='width:600px; 'src="{{ post.image}}" alt=""></a>
+      
+        <div class=" col-4 px-1 d-flex  mt-1">
+            <div class="square-container align-items-left">
+            <a href="{% url "posts:detail" post.id %}"><img class="img-fluid resize_img" src="{{ post.image}}" alt=""></a>
+            </div>
         </div>
       {% endfor %}
     </div>
@@ -243,5 +246,24 @@
             followerPopup.style.display = "none";
         }
     }
+
+    window.addEventListener('load', function() {
+        var images = document.querySelectorAll('.resize_img');
+        images.forEach(function(image) {
+            // 이미지의 가로와 세로 비율을 계산
+            var aspectRatio = image.width / image.height;
+            if (aspectRatio > 1) {
+                // 가로가 세로보다 긴 경우
+                image.style.width = '100%';
+                image.style.height = '100%';
+
+            } else {
+                // 세로가 가로보다 긴 경우
+                image.style.width = '100%';
+                image.style.height = '100%';
+            }
+        });
+    });
+
 </script>
 {% endblock script %}

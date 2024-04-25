@@ -3,11 +3,23 @@
 <br>
 <h3>[ 스토리 상세페이지 ]</h3>
 
-
+    <div width=300px class="text-right"> 
         <div >
-            <img src="{{ story.image.url }}" class="img-fluid" style='width:300px;'>
+            <img width=300px src="{{ story.image.url }}" class="img-fluid" style='width:300px;'>
         </div>
-
-    <a href="{% url 'stories:create' %}">스토리 업로드하기</a>
-
+        <br>
+        <div class="text-right">
+            <a href='#' onclick="confirmDeleteStory('{{ story.pk }}')" class="btn btn-primary text-decoration-none">삭제</a>
+        </div>
+        
+    </div>
 {% endblock content %}
+{% block script %}
+<script>
+        function confirmDeleteStory(postId) {
+            if (confirm("정말로 삭제하시겠습니까?")) {
+                window.location.href = "{% url 'stories:story_delete' pk=story.pk %}";
+            }
+        }
+</script>
+{% endblock script %}
