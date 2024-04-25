@@ -1,9 +1,51 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Upload Story</h1>
-<form method="POST" action="{% url "stories:create" %}" enctype="multipart/form-data">
+{% comment %} <h1>Upload Story</h1> {% endcomment %}
+{% comment %} <form method="POST" action="{% url "stories:create" %}" enctype="multipart/form-data">
     {% csrf_token %}
     <input type="file" name="image">
     <button type="submit">Upload</button>
-</form>
+</form> {% endcomment %}
+
+
+<style>
+    .text-right {
+        text-align: right;
+    }
+</style>
+    <div class="container mt-8">
+        <div class="row justify-content-center">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">새 스토리 만들기</div>
+                    <div class="card-body">
+                        <form id="post_form" action='{% url "stories:create" %}' method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="image_input"></label>
+                                <input type="file" class="form-control-file" id="image_input" name="image" accept="image/*" onchange="previewImage(event)">
+                            </div>
+                            <div class="form-group" style="margin-top: 10px;"> <!-- 여기에 공백 추가 -->
+                                <img id="image_preview" src="#" alt="이미지 미리보기" style="display: none; max-width: 100%; max-height: 350px;">
+                            </div>
+                            <div class="text-right"> <!-- 버튼을 오른쪽에 배치하기 위해 text-right 클래스 추가 -->
+                                <button type="submit" class="btn btn-primary" style="margin-top: 10px;">공유하기</button> <!-- 여기에 공백 추가 -->
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 {% endblock content %}
+{% block script %}
+<script>
+    function previewImage(event) {
+        const image = document.getElementById('image_preview');
+        image.style.display = 'block';
+        image.src = URL.createObjectURL(event.target.files[0]);
+    }
+</script>
+{% endblock script %}

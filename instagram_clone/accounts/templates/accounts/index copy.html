@@ -114,21 +114,22 @@
 
 <h3>계정페이지 관리</h3>
 
-<div style='display: flex; flex-direction: row;'>
+<div style='display: flex; flex-direction: row;' class="profile" >
+    <div style='display: flex; flex-direction: column; width:100px; padding: 5px 5px 5px 5px; '>
 
-    <div style='padding: 5px 5px 5px 5px; '>
-    {% if user.profile_url %}
-    <img src="{{user.profile_url}}" alt="프로필 사진" height=100>
-    {% else %}
-    {% load static %}
-    <img src="{% static 'images/none_img.jpg' %}" alt="프로필 사진" height=100>
-    {% endif %}
+            {% if user.profile_url %}
+            <img class='index-profile-pic-img' src="{{user.profile_url}}" alt="프로필 사진"  style='width:50px'>
+            {% else %}
+            {% load static %}
+            <img class='index-profile-pic-img' src="{% static 'images/none_img.jpg' %}" alt="프로필 사진" style='width:50px'>
+            {% endif %}
+
     </div>
 
-    <div style='display: flex; flex-direction: column; width:150px; padding: 5px 5px 5px 5px'>
-        <span> {{ user.alias_name }} </span>
-        <span> 게시물 </span>
-        <span>{{user.real_name }}</span>
+    <div style='display: flex; flex-direction: column; width:100px; padding: 5px 5px 5px 5px'>
+        <span></span>
+        <span><b>{{user.real_name }}</b></span>
+        <span></span>
     </div>
 
     <div style='display: flex; flex-direction: column; width:200px; padding: 5px 5px 5px 5px'>
@@ -203,15 +204,85 @@
 <!-- 사용자가 작성한 글 목록 -->
 <h4>내가 작성한 글 목록</h4>
 <hr>
-<div class="container">
-    <div class="row flex-wrap">
-      {% for post in user_posts %}
-        <div class="col-4 d-flex align-items-start">
-            <a href="{% url "posts:detail" post.id %}"><img width=200px class="img-fluid" src="{{ post.image}}" alt=""></a>
+
+{% for post in user_posts %}
+<div class="instagram-post">
+    <!-- 게시물 헤더 -->
+    <div class="post-header">
+        <div class="profile-image">
+            <!-- 프로필 이미지 -->
+            {% if post.user.profile_url %}
+                <img src="{{ post.user.profile_url }}" alt="프로필 사진">
+            {% else %}
+                <div class="profile-pic">
+                    <img src="{% static 'images/posts/avatar.png' %}" class="profile-pic-img">
+                </div>
+            {% endif %}
         </div>
-      {% endfor %}
+        <div class="username" style="margin-left: 30px; margin-top: 20px">
+            <p>{{ post.user }}</p>
+        </div>
+    </div>
+    <!-- 게시물 내용 -->
+    <div class="post-content">
+        {% if post.image %}
+            <img src="{{ post.image }}" alt="Post Image" class="post-image">
+        {% endif %}
+        <p>{{ post.content }}</p>
+    </div>
+    <!-- 댓글 목록 -->
+<div class="comments-section">
+    <ol>
+        {% for comment in post.comments.all %}
+            <div class="comment-controls"> <!-- 댓글과 댓글 작성, 삭제를 감싸는 div 추가 -->
+                <li>
+                    <strong>{{ comment.user.username }}</strong> {{ comment.content }}
+                    {% if request.user == comment.user %}
+                    <div> <!-- 댓글 수정, 삭제 버튼을 감싸는 div 추가 -->
+                        <a href='{% url "posts:edit_comment" pk=comment.pk %}' class="btn btn-link comment-action-link">댓글 수정</a>
+                        <a href='{% url "posts:delete_comment" post_id=post.pk comment_id=comment.id %}' onclick="event.preventDefault(); if(confirm('정말로 삭제하시겠습니까?')){document.getElementById('delete-form-{{ comment.id }}').submit();}" class="btn btn-link comment-action-link">댓글 삭제</a>
+                        <form id="delete-form-{{ comment.id }}" action='{% url "posts:delete_comment" post_id=post.pk comment_id=comment.id %}' method='POST' style="display: none;">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{{ request.path }}">
+                        </form>
+                    </div>
+                    {% endif %}
+                </li>
+            </div>
+        {% empty %}
+            <div>댓글이 없습니다.</div>
+        {% endfor %}
+    </ol>
+</div>
+<!-- 댓글 작성하기 -->
+<form action="{% url 'posts:create_comment' pk=post.pk %}" method="POST">
+    {% csrf_token %}
+    <div class="comment-controls"> <!-- 댓글 입력란과 버튼을 감싸는 div 추가 -->
+        <textarea name="content" rows="1" cols="25"></textarea>
+        <input type="submit" value="댓글 작성하기">
+    </div>
+</form>
+    <!-- 게시물 액션 버튼 -->
+    <div class="post-actions">
+        <div>
+                <p>좋아요 {{ post.like_users.count }}개</p> <!-- 좋아요 개수 표시 -->
+                <p>{{ post.created_at }}</p> <!-- created_at 표시 -->
+        </div>
+        <div style= 'margin-top: 20px;'>
+            <a href='{% url "posts:detail" pk=post.pk %}' class="btn btn-primary">글 보기</a>
+        {% if request.user == post.user %}
+            <a href='{% url "posts:update" pk=post.pk %}' class="btn btn-primary">게시글 수정</a>
+        {% endif %}
+        </div>
     </div>
 </div>
+
+{% empty %}
+    <p>작성한 글이 없습니다.</p>
+{% endfor %}
+
+
+
 {% endblock content %}
 
 {% block script %}

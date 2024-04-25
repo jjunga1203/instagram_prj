@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-
+<br><h3>[ 알림 ]</h3>
 {% for content in contents %}
     <div class="notification">
         <table>
@@ -16,11 +16,9 @@
                 <td></td>
             </tr>
             <tr>
-                <td>{{ content.msg }}</td>
-            </tr>
-            <tr>
-                <td>{{ content.created_at }}</td>
-            </tr>
+                <td><b>&nbsp;{{content.real_name}}</b> {{ content.msg }}<br>&nbsp;&nbsp;
+                    {{ content.created_at }}</td>
+         </tr>
         </table>
     </div>
 {% endfor %}
