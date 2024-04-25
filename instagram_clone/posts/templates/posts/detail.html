@@ -36,9 +36,9 @@
         
         {% if request.user == post.user %}
         <div class="d-flex justify-content-end">
-            <a href='{% url "posts:update" pk=post.pk %}' class="btn btn-primary text-decoration-none">수정</a>
+            <a href='{% url "posts:update" pk=post.pk %}' class="btn btn-light btn-sm text-decoration-none">수정</a>
             &nbsp;
-            <a href='#' onclick="confirmDeletePost('{{ post.pk }}')" class="btn btn-danger text-decoration-none">삭제</a>
+            <a href='#' onclick="confirmDeletePost('{{ post.pk }}')" class="btn btn-sm btn-light text-decoration-none">삭제</a>
         </div>
         {% endif %}
         <div class="comment-wrapper">
@@ -54,8 +54,8 @@
                             {% if request.user == comment.user %}
                             <span> <!-- 수정한 부분 -->
                                 {% csrf_token %}
-                                <button class="btn btn-primary btn-sm text-decoration-none" id="edit-comment-btn" data-comment-id="{{ comment.pk }}">수정</button>
-                                <button class="btn btn-secondary btn-sm text-decoration-none" id="delete-comment-btn" data-post-id="{{ post.pk }}" data-comment-id="{{ comment.pk }}">삭제</button>
+                                <button class="btn btn-light btn-sm text-decoration-none" id="edit-comment-btn" data-comment-id="{{ comment.pk }}">수정</button>
+                                <button class="btn btn-light btn-sm text-decoration-none" id="delete-comment-btn" data-post-id="{{ post.pk }}" data-comment-id="{{ comment.pk }}">삭제</button>
                             </span>
                             {% endif %}
                         </div>
