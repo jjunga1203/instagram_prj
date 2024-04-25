@@ -1,8 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-
-<<<<<<< HEAD
 <div class="posts">
     <div class="post-home">
         <div class="info">
@@ -34,8 +32,6 @@
             <strong><p class="likes">좋아요 {{ post.like_users.count }}개</p></strong>
             <p class="description"><span><strong>{{ post.user.username }}</strong></span> {{ post.content }}</p>
         </div>
-        
-<<<<<<< HEAD
         {% if request.user == post.user %}
         <div class="d-flex justify-content-end">
             <a href='{% url "posts:update" pk=post.pk %}' class="btn btn-primary text-decoration-none">수정</a>
@@ -49,7 +45,7 @@
                 {% for comment in post.comments.all %}
                     <li class="list-group-item">
                         <div id="comment-{{ comment.pk }}">
-                            <strong>{{ comment.user.username }}</strong> 
+                            <strong>{{ comment.user.username }}</strong>
                             <span id="comment-content-{{ comment.pk }}">{{ comment.content }}</span>
                             {% if request.user == comment.user %}
                             <button class="btn btn-primary text-decoration-none" data-comment-id="{{ comment.pk }}">수정</button>
@@ -70,14 +66,11 @@
                 &nbsp;
                 <button type="submit" class="btn btn-secondary text-decoration-none" style="width: 130px; height: auto;">댓글 작성</button> <!-- 높이를 자동으로 조절 -->
             </form>
-
-</div>
+            </div>
         </div>
     </div>
 </div>
-
 {% endblock content %}
-
 {% block script %}
 <script>
     function confirmDeletePost(postId) {
