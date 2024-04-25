@@ -118,10 +118,10 @@
 
     <div style='padding: 5px 5px 5px 5px; '>
     {% if user.profile_url %}
-    <img src="{{user.profile_url}}" alt="프로필 사진" height=100>
+    <img class='index-profile-pic-img' src="{{user.profile_url}}" alt="프로필 사진" height=100>
     {% else %}
     {% load static %}
-    <img src="{% static 'images/none_img.jpg' %}" alt="프로필 사진" height=100>
+    <img class='index-profile-pic-img' src="{% static 'images/none_img.jpg' %}" alt="프로필 사진" height=100>
     {% endif %}
     </div>
 
@@ -210,7 +210,7 @@
       {% for post in user_posts %}
       
         <div class=" col-4 px-1 d-flex  mt-1">
-            <div class="square-container align-items-left">
+            <div style='width:600px;' class="square-container align-items-left">
             <a href="{% url "posts:detail" post.id %}"><img class="img-fluid resize_img" src="{{ post.image}}" alt=""></a>
             </div>
      </div>

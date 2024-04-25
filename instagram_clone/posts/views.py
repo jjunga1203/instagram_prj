@@ -34,7 +34,7 @@ def home(request):
     user_grouped_stories = (
         Story.objects
         .filter(filter_condition)
-        .values('user__id', 'user__username', 'user__profile_url')
+        .values('user__id', 'user__username', 'user__profile_url', 'user__alias_name')
         .annotate(num_stories=Count('id'))
     )
     

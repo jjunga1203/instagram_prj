@@ -27,13 +27,53 @@
 <p>프로필 사진을 등록하세요.</p>
 {% endif %}
 
+<div>
+<!-- add_box id 속성 추가 -->
+<button id="img_modal" type="button" class="btn btn-primary" data-toggle="modal" data-target="#imgModalCenter" style="width: 150px;">
+    사진변경
+</button>
+
+<!-- model id 속성 추가 -->
+<!-- create feed -->
+<div class="modal fade" id="imgModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">사진 변경</h5>
+            </div>
+            <div class="modal-body">
+
+                <form method="post" action="{% url "accounts:upload_img" user.id %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="file" name="profile_img">
+                <button type="submit" value='사진올리기' class='btn btn-primary btn-sm'>Upload</button>
+                </form>
+
+                <p>
+                <form class='delete_img' method='post' action="{% url "accounts:delete_img" user.id %}">
+                    {% csrf_token %}
+                    <button type="submit" value='사진삭제' class='btn btn-primary btn-sm'>현재 사진 삭제</button>
+                </form></p>
+            </div>
+
+            <div class="modal-footer">
+                <button id="img_close" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
 <!-- Button trigger modal -->
 <button id="pro_modal" type="button" class="btn btn-primary" data-toggle="modal" data-target="#ProfileModalCenter" style="width: 150px;">
     프로필변경
 </button>
 
 <!-- Modal -->
-<div class="modal fade" id="ProfileModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+<div class="modal fade" id="ProfileModalCenter" tabindex="-1" role="dialog" aria-labelledby="ProfileModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -60,12 +100,15 @@
                             </tr>
                         </tbody>
                     </table>
-                    <button type="submit">저장</button>
+                    <br>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary"  type="submit">저장</button>
+                        <button id="pro_close" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+
                 </form>
             </div>
-            <div class="modal-footer">
-                <button id="pro_close" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            </div>
+
         </div>
     </div>
 </div>
@@ -84,7 +127,7 @@
             <div class="modal-body">
                 <form method="post" action="{% url 'accounts:change_pw' user.id %}">
                     {% csrf_token %}
-                    <table>
+                    <table style=' border: 1px '>
                         <tbody>
                             <tr>
                                 <td>현재 비밀번호</td>
@@ -100,14 +143,19 @@
                             </tr>
                         </tbody>
                     </table>
-                    <button type="submit">변경</button>
+
+                    <br>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">변경</button>
+                        <button id="pw_close" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
                 </form>
             </div>
-            <div class="modal-footer">
-                <button id="pw_close" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            </div>
+
         </div>
     </div>
+</div>
+
 </div>
 
 {% endblock content %}
@@ -130,5 +178,13 @@
     document.querySelector('#pw_close').addEventListener('click', function() {
         $('#PasswordModalCenter').modal('hide');
     });
+        // 사진편집 변경 클릭
+        document.querySelector('#img_modal').addEventListener('click', function() {
+            $('#imgModalCenter').modal('show');
+        });
+        // 사진편집 변경 닫기
+        document.querySelector('#img_close').addEventListener('click', function() {
+            $('#imgModalCenter').modal('hide');
+        });
 </script>
 {% endblock script %}

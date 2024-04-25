@@ -10,7 +10,7 @@
         <div class="row flex-wrap">
             {% for story in archived_stories %}
                 <div class="col-4 px-1 d-flex mt-1">
-                    <div class="square-container align-items-left">
+                    <div style='width:600px;' class="square-container align-items-left">
                     <a href="{% url "stories:edit" story.id %}"><img src="{{ story.image.url }}" class="img-fluid resize_img" style='width:600px;'></a>
                     </div>
 
