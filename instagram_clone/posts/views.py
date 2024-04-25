@@ -1,9 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404, reverse
-from django.shortcuts import render, redirect, get_object_or_404, reverse
 from .models import Post, Comment
 from accounts.models import User
-from stories.models import Story
-from notifications.models import Notification
 from stories.models import Story
 from notifications.models import Notification
 from .forms import PostForm, CommentForm
@@ -17,6 +14,9 @@ from django.db.models import Count
 from django.utils import timezone
 from datetime import timedelta
 from django.db.models import Count
+from django.urls import reverse
+from django.http import HttpResponseRedirect
+from django.views.decorators.http import require_POST
 
 @login_required
 def home(request):
@@ -99,13 +99,10 @@ def create(request):
             post.image = image_url  # 이미지 URL을 모델에 저장
             post.save()
             return redirect('posts:detail', pk=post.pk)
-            # return redirect('posts:detail', pk=post.pk)
     else:
         form = PostForm()
     return render(request, 'posts/create.html', {'form': form})
-    return render(request, 'posts/create.html', {'form': form})
 
-@login_required
 @login_required
 def update(request, pk):
     post = Post.objects.get(pk=pk)
@@ -156,6 +153,7 @@ def delete(request, pk):
     post = Post.objects.get(pk=pk)
     if request.user == post.user:
         post.delete()
+
     
     # 바로 인덱스 페이지로 리다이렉트합니다.
     return redirect(reverse('accounts:index', kwargs={'user_idx': request.user.id}))
@@ -163,19 +161,33 @@ def delete(request, pk):
     # 바로 인덱스 페이지로 리다이렉트합니다.
     # return redirect(reverse('accounts:index', kwargs={'user_idx': request.user.id}))
 
+from django.shortcuts import redirect, HttpResponse
+from django.contrib import messages
+
 def delete_comment(request, post_id, comment_id):
-    comment = Comment.objects.get(pk=comment_id)
-    if request.user == comment.user:
-        comment.delete()
-    return redirect('posts:detail', post_id)
+    try:
+        comment = Comment.objects.get(pk=comment_id)
+        if request.user == comment.user:
+            comment.delete()
+            return redirect('posts:detail', post_id)
+        else:
+            # Display an error message if the user is not the owner of the comment
+            messages.error(request, "You don't have permission to delete this comment.")
+            return redirect('posts:detail', post_id)
+    except Comment.DoesNotExist:
+        # Display an error message if the comment does not exist
+        messages.error(request, "The comment you're trying to delete does not exist.")
+        return redirect('posts:detail', post_id)
+
 
 def create_comment_notification(user, post, comment_content):
     message = f'{user.real_name}님이 회원님의 게시물에 댓글을 남겼습니다: {comment_content}'
-    # Notification.objects.create(user=post.user, message=message, post=post)
     Notification.objects.create(user=post.user, message=message, post=post, msg_user_id=user.id, msg_user_real_name=user.real_name)
 
 
 def create_comment(request, pk):
+    referring_url = request.META.get('HTTP_REFERER')
+
     if request.method == 'POST':
         content = request.POST.get('content')
         if content:
@@ -185,54 +197,22 @@ def create_comment(request, pk):
             # 댓글이 작성되었을 때 알림 생성
             create_comment_notification(request.user, post, content)
 
-    # return redirect('posts:detail', pk=post.pk)
-    return redirect('posts:home') #, user_idx=request.user.pk)
+    return HttpResponseRedirect(referring_url) if referring_url else redirect('posts:home')
 
-# 혹시 몰라 남겨놓음 지워도 됨
-# def create_comment(request, pk):
-#     post = Post.objects.get(pk=pk)
-#     comment_form = CommentForm(request.POST)
-#     if comment_form.is_valid():
-#         comment = comment_form.save(commit=False)
-#         comment.post = post
-#         comment.user = request.user
-#         comment.save()
 
-#         # 댓글이 작성되었을 때 알림 생성
-#         create_comment_notification(request.user, post, comment.content)
 
-#         return redirect('posts:detail', pk=pk)
-
-#     context = {
-#         'post': post,
-#         'comment_form': comment_form
-#     }
-#     return render(request, 'posts/detail.html', context)
-
+@require_POST
 def edit_comment(request, pk):
-    # 댓글을 가져옵니다.
+    referring_url = request.META.get('HTTP_REFERER')
     comment = Comment.objects.get(pk=pk)
+    form = CommentForm(request.POST, instance=comment)
+    
+    if form.is_valid():
+        form.save()
 
-    # POST 요청을 처리합니다.
-    if request.method == 'POST':
-        # POST 데이터와 함께 댓글 폼을 초기화합니다.
-        comment_form = CommentForm(request.POST, instance=comment)
-        if comment_form.is_valid():
-            # 폼이 유효하다면 수정된 댓글을 저장합니다.
-            comment_form.save()
-            # 댓글 수정 후 해당 포스트의 상세 페이지로 리다이렉트합니다.
-            return redirect('posts:detail', pk=comment.post.pk)
-    else:
-        # GET 요청의 경우 초기 댓글 폼을 생성합니다.
-        comment_form = CommentForm(instance=comment)
+    return HttpResponseRedirect(referring_url) if referring_url else redirect('posts:home')
 
-    # 댓글 수정을 위한 폼과 해당 댓글이 속한 포스트를 템플릿 컨텍스트에 추가합니다.
-    context = {
-        'comment_form': comment_form,
-        'post': comment.post
-    }
-    # 댓글 수정 템플릿을 렌더링합니다.
-    return render(request, 'posts/edit_comment.html', context)
+        
 
 def create_like_notification(user, post):
     message = f'{user.real_name}님이 회원님의 게시물을 좋아합니다.'
@@ -248,15 +228,7 @@ def post_like(request, post_id):
         post.like_users.add(request.user, through_defaults={'memo': '메모'})
         # 좋아요 알림 생성
         create_like_notification(request.user, post)
-        # 좋아요 알림 생성
-        create_like_notification(request.user, post)
     return redirect('posts:home')
-
-def user_posts(request):
-    # 현재 사용자가 작성한 모든 글을 가져옴
-    user_posts = Post.objects.filter(user=request.user)
-    return render(request, 'posts/user_posts.html', {'user_posts': user_posts})
-
 
 def user_posts(request):
     # 현재 사용자가 작성한 모든 글을 가져옴
