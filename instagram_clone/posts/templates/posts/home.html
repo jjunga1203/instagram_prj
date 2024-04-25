@@ -63,14 +63,16 @@
                             <ul class="list-group">
                                 {% for comment in post.comments.all %}
                                     <li class="list-group-item">
-                                        <div id="comment-{{ comment.pk }}">
-                                            <strong>{{ comment.user.username }}</strong> 
-                                            <span id="comment-content-{{ comment.pk }}">{{ comment.content }}</span>
+                                        <div id="comment-{{ comment.pk }}" class="d-flex justify-content-between"> <!-- 수정한 부분 -->
+                                            <div>
+                                                <strong>{{ comment.user.username }}</strong> 
+                                                <span id="comment-content-{{ comment.pk }}">{{ comment.content }}</span>
+                                            </div>
                                             {% if request.user == comment.user %}
-                                            {% csrf_token %}
-                                            <button class="edit-comment-btn" data-comment-id="{{ comment.pk }}">수정</button>
-                                            <button class="delete-comment-btn" data-post-id="{{ post.pk }}" data-comment-id="{{ comment.pk }}">삭제</button>
-                                            
+                                            <span> <!-- 수정한 부분 -->
+                                                <button class="btn btn-primary text-decoration-none" data-comment-id="{{ comment.pk }}">수정</button>
+                                                <button class="btn btn-secondary text-decoration-none" data-post-id="{{ post.pk }}" data-comment-id="{{ comment.pk }}">삭제</button>
+                                            </span>
                                             {% endif %}
                                         </div>
                                     </li>
@@ -78,15 +80,18 @@
                                     <li class="list-group-item">댓글이 없습니다.</li>
                                 {% endfor %}
                             </ul>
-
-                            <form action="{% url 'posts:create_comment' pk=post.pk %}" method="POST" class="mt-3">
-                                {% csrf_token %}
-                                <div class="form-group">
-                                    <textarea name="content" rows="4" class="form-control"></textarea>
-                                </div>
-                                <button type="submit" class="btn btn-secondary">댓글 작성</button>
-                            </form>
+                            <div>
+                                <form action="{% url 'posts:create_comment' pk=post.pk %}" method="POST" class="mt-3 d-flex justify-content-end">
+                                    {% csrf_token %}
+                                    <div class="form-group" style="width: 90%;">
+                                        <textarea name="content" rows="1" class="form-control"></textarea>
+                                    </div>
+                                    &nbsp;
+                                    <button type="submit" class="btn btn-secondary text-decoration-none" style="width: 130px; height: auto;">댓글 작성</button>
+                                </form>
+                            </div>
                         </div>
+                        
                     </div>
                     {% endfor %}
                     {% else %}
