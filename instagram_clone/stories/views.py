@@ -45,6 +45,17 @@ def detail(request, pk):
     }
     return render(request, 'stories/detail.html', context)
 
+# 상세 페이지 열기
+def edit(request, pk):
+    # user = get_object_or_404(get_user_model(), pk=pk)
+    story = Story.objects.get(pk=pk)
+
+    context = {
+        'story': story,
+    }
+    return render(request, 'stories/edit.html', context)
+
+
 @login_required
 def delete(request, pk):
     story = get_object_or_404(Story, pk=pk)
