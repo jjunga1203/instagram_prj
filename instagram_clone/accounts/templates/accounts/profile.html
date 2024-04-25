@@ -27,6 +27,40 @@
 <p>프로필 사진을 등록하세요.</p>
 {% endif %}
 
+<div>
+<!-- 사진 변경 -->
+<button id="img_modal" type="button" class="btn btn-primary" data-toggle="modal" data-target="#imgModalCenter" style="width: 150px;">
+    사진 변경
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="imgModalCenter" tabindex="-1" role="dialog" aria-labelledby="imgModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">프로필 편집</h5>
+            </div>
+            <div class="modal-body">
+
+                <div class="modal_content">
+                    <div> 사진 업로드 </div>
+                        <form method="post" action="{% url "accounts:upload_img" user.id %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="file" name="profile_img">
+                        <button type="submit" value='사진올리기' class='btn btn-primary btn-sm'>Upload</button>
+                        </form>
+                    <p>
+                    <form class='delete_img' method='post' action="{% url "accounts:delete_img" user.id %}">
+                        {% csrf_token %}
+                        <button type="submit" value='사진삭제' class='btn btn-primary btn-sm'>현재 사진 삭제</button>
+                    </form></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <!-- Button trigger modal -->
 <button id="pro_modal" type="button" class="btn btn-primary" data-toggle="modal" data-target="#ProfileModalCenter" style="width: 150px;">
     프로필변경
@@ -60,12 +94,15 @@
                             </tr>
                         </tbody>
                     </table>
-                    <button type="submit">저장</button>
+ 
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">저장</button>
+                        <button id="pro_close" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+
                 </form>
             </div>
-            <div class="modal-footer">
-                <button id="pro_close" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            </div>
+
         </div>
     </div>
 </div>
@@ -110,6 +147,7 @@
     </div>
 </div>
 
+</div>
 {% endblock content %}
 
 {% block script %}
@@ -129,6 +167,14 @@
     // 비밀번호 변경 닫기
     document.querySelector('#pw_close').addEventListener('click', function() {
         $('#PasswordModalCenter').modal('hide');
+    });
+    // 사진 변경 클릭
+    document.querySelector('#img_modal').addEventListener('click', function() {
+        $('#imgModalCenter').modal('show');
+    });
+    // 사진 변경 닫기
+    document.querySelector('#img_close').addEventListener('click', function() {
+        $('#imgModalCenter').modal('hide');
     });
 </script>
 {% endblock script %}

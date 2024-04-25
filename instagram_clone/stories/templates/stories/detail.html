@@ -1,14 +1,23 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>스토리 상세화면</h1>
-<h2>{{ user.username }}의 스토리 목록</h2>
+<br>
+<h3>[ {{user.alias_name}} 스토리 목록 ]</h3>
 
 {% if user_stories %}
-    <ul>
+<div style='width:600px;'>
+    <div class="container align-items-start">
+        <div class="row flex-wrap">
+                
         {% for story in user_stories %}
-        <img src="{{ story.image.url }}">
+
+        <div class="col-4 px-0 d-flex">
+            <img src="{{ story.image.url }}" class="img-fluid" style='width:600px;'>
+        </div>
+
         {% endfor %}
-    </ul>
+
+    </div>
+</div>
 {% else %}
     <p>현재 업로드된 스토리가 없습니다.</p>
     <a href="{% url 'stories:create' %}">스토리 업로드하기</a>

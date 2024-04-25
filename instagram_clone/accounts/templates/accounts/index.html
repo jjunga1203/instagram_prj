@@ -25,8 +25,8 @@
     }
 
     .profile-image {
-        width: 40px;
-        height: 40px;
+        width: 70px;
+        height: 70px;
         border-radius: 50%;
         margin-right: 10px;
     }
@@ -111,18 +111,18 @@
         list-style-type: none;
     }
 </style>
+<br>
+<h3>[ 계정페이지 관리 ]</h3>
 
-<h3>계정페이지 관리</h3>
-
-<div style='display: flex; flex-direction: row;'>
+<div style='display: flex; flex-direction: row; max-width: 600px; align-items-center'>
 
     <div style='padding: 5px 5px 5px 5px; '>
-    {% if user.profile_url %}
-    <img src="{{user.profile_url}}" alt="프로필 사진" height=100>
-    {% else %}
-    {% load static %}
-    <img src="{% static 'images/none_img.jpg' %}" alt="프로필 사진" height=100>
-    {% endif %}
+        {% if user.profile_url %}
+        <img class='profile-image' src="{{user.profile_url}}" alt="프로필 사진"  height=100>
+        {% else %}
+        {% load static %}
+        <img class='profile-image' src="{% static 'images/none_img.jpg' %}" alt="프로필 사진" height=100>
+        {% endif %}
     </div>
 
     <div style='display: flex; flex-direction: column; width:150px; padding: 5px 5px 5px 5px'>
@@ -145,6 +145,7 @@
         <p>
             팔로잉 수: <a class="text-decoration-none" href="#" onclick="showFollowingList()">{{ following_count }}</a>
         </p>
+
         <div id="following_popup" style="display: none;">
             <p>팔로잉 목록</p>
             <ul>
@@ -203,15 +204,18 @@
 <!-- 사용자가 작성한 글 목록 -->
 <h4>내가 작성한 글 목록</h4>
 <hr>
-<div class="container">
+<div style='width:600px; '>
+<div class="container align-items-start" >
     <div class="row flex-wrap">
       {% for post in user_posts %}
-        <div class="col-4 d-flex align-items-start">
-            <a href="{% url "posts:detail" post.id %}"><img width=200px class="img-fluid" src="{{ post.image}}" alt=""></a>
+        <div class="col-4 px-0 d-flex ">
+            <a href="{% url "posts:detail" post.id %}"><img class="img-fluid" style='width:600px; 'src="{{ post.image}}" alt=""></a>
         </div>
       {% endfor %}
     </div>
 </div>
+</div>
+
 {% endblock content %}
 
 {% block script %}

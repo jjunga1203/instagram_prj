@@ -34,7 +34,7 @@ def home(request):
     user_grouped_stories = (
         Story.objects
         .filter(filter_condition)
-        .values('user__id', 'user__username', 'user__profile_url')
+        .values('user__id', 'user__username', 'user__profile_url', 'user__alias_name')
         .annotate(num_stories=Count('id'))
     )
     
@@ -99,7 +99,7 @@ def create(request):
             post.image = image_url  # 이미지 URL을 모델에 저장
             post.save()
             return redirect('posts:detail', pk=post.pk)
-            return redirect('posts:detail', pk=post.pk)
+            # return redirect('posts:detail', pk=post.pk)
     else:
         form = PostForm()
     return render(request, 'posts/create.html', {'form': form})
@@ -113,7 +113,6 @@ def update(request, pk):
         return redirect('posts:home')
     
     if request.method == 'POST':
-        form = PostForm(request.POST, request.FILES, instance=post)  # request.FILES 추가
         form = PostForm(request.POST, request.FILES, instance=post)  # request.FILES 추가
         if form.is_valid():
             # 이미지를 S3에 업로드
@@ -162,7 +161,7 @@ def delete(request, pk):
     return redirect(reverse('accounts:index', kwargs={'user_idx': request.user.id}))
     
     # 바로 인덱스 페이지로 리다이렉트합니다.
-    return redirect(reverse('accounts:index', kwargs={'user_idx': request.user.id}))
+    # return redirect(reverse('accounts:index', kwargs={'user_idx': request.user.id}))
 
 def delete_comment(request, post_id, comment_id):
     comment = Comment.objects.get(pk=comment_id)
@@ -186,7 +185,8 @@ def create_comment(request, pk):
             # 댓글이 작성되었을 때 알림 생성
             create_comment_notification(request.user, post, content)
 
-    return redirect('accounts:index', user_idx=request.user.pk)
+    # return redirect('posts:detail', pk=post.pk)
+    return redirect('posts:home') #, user_idx=request.user.pk)
 
 # 혹시 몰라 남겨놓음 지워도 됨
 # def create_comment(request, pk):

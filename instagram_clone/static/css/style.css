@@ -344,9 +344,9 @@ ul{
 
 
 .index-profile-pic-img {
-    /* width: 60px; Adjust profile picture size */
-    height: auto;
-    border-radius: 30%; /* Make profile picture circular */
+    width: 60px; /* Adjust profile picture size */
+
+    border-radius: 50%; /* Make profile picture circular */
     object-fit: cover; /* Maintain aspect ratio */
     margin-bottom: 10px; /* Add space below profile picture */
 }

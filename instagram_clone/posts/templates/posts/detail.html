@@ -68,7 +68,7 @@
             <div style="flex: 1;">
                 
                 {% if post.image %}
-                    <img class="post-image" src="{{ post.image }}" alt="Post Image">
+                    <img  style='max-width: 70%' class="post-image" src="{{ post.image }}" alt="Post Image">
                 {% endif %}
                 
             </div>
@@ -116,9 +116,9 @@
         
             <div class="post-actions">
             {% if request.user == post.user %}
-                <a href='{% url "posts:update" pk=post.pk %}' class="btn btn-primary" style="margin-top: 10px;">게시글 수정</a>
+                <a href='{% url "posts:update" pk=post.pk %}' class="btn btn-primary text-decoration-none" style="margin-top: 10px;">게시글 수정</a>
                 &nbsp; <!-- 조금의 여백을 추가합니다. -->
-                <a href='#' onclick="confirmDeletePost('{{ post.pk }}')" class="btn btn-danger" style="margin-top: 10px;">게시글 삭제</a>
+                <a href='#' onclick="confirmDeletePost('{{ post.pk }}')" class="btn btn-danger text-decoration-none" style="margin-top: 10px;">게시글 삭제</a>
                 <hr>
                 <script>
                     function confirmDeletePost(postId) {

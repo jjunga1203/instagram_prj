@@ -45,6 +45,26 @@ def detail(request, pk):
     }
     return render(request, 'stories/detail.html', context)
 
+# 삭제만 가능한 수정 기능
+def edit(request, pk):
+    story = Story.objects.get(pk=pk)
+    print(request.user.id)
+
+    context = {
+        'story': story,
+    }
+
+    if request.method == 'POST':
+        form = StoryForm(request.POST, request.FILES, instance=story)  # request.FILES 추가
+        if form.is_valid():
+            form.save()
+            return redirect('stories:edit', story.pk)
+        
+        return render(request, 'stories/edit.html', context)
+
+    return render(request, 'stories/edit.html', context)
+
+
 @login_required
 def delete(request, pk):
     story = get_object_or_404(Story, pk=pk)
