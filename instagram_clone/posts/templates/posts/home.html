@@ -10,6 +10,7 @@
 
                 <div class="stories">
                     {% for group in user_grouped_stories %}
+                    <a href="{% url 'stories:detail' group.user__id %}" class="link-dark text-decoration-none">
                     <div class="stories-card">
                         <div class="profile-pic">
                             {% if group.user__profile_url %}
@@ -18,10 +19,9 @@
                             <img src="{% static 'images/none_img.jpg' %}" alt="프로필 사진">
                             {% endif %}
                         </div>
-                        <a href="{% url 'stories:detail' group.user__id %}" class="link-dark text-decoration-none">
                         <p class="username">{{ group.user__username }}</p>
-                        </a>
                     </div>
+                    </a>
                     {% endfor %}
                 </div>
 
@@ -63,30 +63,22 @@
                             <ul class="list-group">
                                 {% for comment in post.comments.all %}
                                     <li class="list-group-item">
-                                        <strong>{{ comment.user.username }}</strong> {{ comment.content }}
-                                        {% if request.user == comment.user %}
-                                            <a href='{% url "posts:edit_comment" pk=comment.pk %}'>
-                                                수정
-                                            </a>
-                                            <a href='{% url "posts:delete_comment" post_id=post.pk comment_id=comment.id %}' 
-                                                onclick="event.preventDefault(); if(confirm('정말로 삭제하시겠습니까?'))
-                                                {document.getElementById('delete-form-{{ comment.id }}').submit();}">
-                                                삭제
-                                            </a>
-                                            <form id="delete-form-{{ comment.id }}" 
-                                                action='{% url "posts:delete_comment" post_id=post.pk comment_id=comment.id %}' 
-                                                method='POST' 
-                                                style="display: none;">
-                                                {% csrf_token %}
-                                                <input type="hidden" name="next" value="{{ request.path }}">
-                                            </form>
-                                        {% endif %}
+                                        <div id="comment-{{ comment.pk }}">
+                                            <strong>{{ comment.user.username }}</strong> 
+                                            <span id="comment-content-{{ comment.pk }}">{{ comment.content }}</span>
+                                            {% if request.user == comment.user %}
+                                            {% csrf_token %}
+                                            <button class="edit-comment-btn" data-comment-id="{{ comment.pk }}">수정</button>
+                                            <button class="delete-comment-btn" data-post-id="{{ post.pk }}" data-comment-id="{{ comment.pk }}">삭제</button>
+                                            
+                                            {% endif %}
+                                        </div>
                                     </li>
                                 {% empty %}
                                     <li class="list-group-item">댓글이 없습니다.</li>
                                 {% endfor %}
                             </ul>
-                            
+
                             <form action="{% url 'posts:create_comment' pk=post.pk %}" method="POST" class="mt-3">
                                 {% csrf_token %}
                                 <div class="form-group">
@@ -94,7 +86,6 @@
                                 </div>
                                 <button type="submit" class="btn btn-secondary">댓글 작성</button>
                             </form>
-                            
                         </div>
                     </div>
                     {% endfor %}
@@ -148,3 +139,7 @@
 </div>
 
 {% endblock content %}
+
+{% block script %}
+<script src="{% static 'js/posts/comments.js' %}"></script>
+{% endblock script %}
