@@ -118,6 +118,14 @@ a:hover {
     height: 45px;
 }
 
+.profile-pic-big img {
+    width: 100px; /* Adjust profile picture size */
+    height: 100px;
+    border-radius: 50%; /* Make profile picture circular */
+    object-fit: cover; /* Maintain aspect ratio */
+    margin-bottom: 10px; /* Add space below profile picture */
+}
+
 .user {
     display: inline-block; /* Set display to inline-block */
 }

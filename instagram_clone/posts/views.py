@@ -11,19 +11,10 @@ from django.db.models import Q
 from django.utils import timezone
 from datetime import timedelta
 from django.db.models import Count
-from django.utils import timezone
-from datetime import timedelta
-from django.db.models import Count
+
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.views.decorators.http import require_POST
-
-from django.shortcuts import render, get_object_or_404
-from django.db.models import Count, Q
-from django.utils import timezone
-from datetime import timedelta
-from .models import Post, Comment
-from .forms import CommentForm
 
 @login_required
 def home(request):
@@ -50,8 +41,8 @@ def home(request):
         Q(user__in=followings) | Q(user=user)
     ).order_by("-created_at")
 
-    # 시간 변수를 미리 정의
-    time_since_created = ""
+    # 시간 변수를 리스트로 초기화
+    time_since_created_list = []
 
     for post in posts:
         # 현재 시간과 포스트 작성 시간의 차이를 계산
@@ -68,12 +59,17 @@ def home(request):
         else:
             days_since_created = int(time_difference.total_seconds() // 86400)
             time_since_created = f"{days_since_created}일 전"
-
+        
+        # 각 포스트의 시간을 리스트에 추가
+        time_since_created_list.append(time_since_created)
+        
+    posts_with_time = list(zip(posts, time_since_created_list))
+    
+    # 게시물별로 시간을 저장한 리스트를 context에 추가
     context = {
         'user': user,
-        'posts': posts,
+        'posts_with_time': posts_with_time,
         'user_grouped_stories': user_grouped_stories,
-        'time_since_created': time_since_created
     }
     return render(request, 'posts/home.html', context)
 
@@ -229,6 +225,8 @@ def create_like_notification(user, post):
     Notification.objects.create(user=post.user, message=message, post=post, msg_user_id=user.id, msg_user_real_name=user.real_name)
 
 def post_like(request, post_id):
+    referring_url = request.META.get('HTTP_REFERER')
+    
     post = Post.objects.get(pk=post_id)
     # 이미 좋아요를 한 사람의 경우에는 좋아요를 취소
     if request.user in post.like_users.all():
@@ -237,7 +235,7 @@ def post_like(request, post_id):
         post.like_users.add(request.user, through_defaults={'memo': '메모'})
         # 좋아요 알림 생성
         create_like_notification(request.user, post)
-    return redirect('posts:home')
+    return HttpResponseRedirect(referring_url) if referring_url else redirect('posts:home')
 
 def user_posts(request):
     # 현재 사용자가 작성한 모든 글을 가져옴
