@@ -1,138 +1,323 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-    <style>
-        .post-image {
-            width: calc(260px - 2px); /* 이미지 너비 설정 */
-            height: calc(260px - 2px); /* 이미지 높이 설정 */
-            margin-right: 1px; /* 이미지 사이 간격 설정 */
-            margin-bottom: 5px; /* 이미지 아래 간격 설정 */
-            display: inline-block; /* 이미지를 인라인 요소로 표시하여 나란히 정렬 */
-        }
+<style>
+.post-image {
+    width: calc(260px - 2px); /* 이미지 너비 설정 */
+    height: calc(260px - 2px); /* 이미지 높이 설정 */
+    margin-right: 1px; /* 이미지 사이 간격 설정 */
+    margin-bottom: 5px; /* 이미지 아래 간격 설정 */
+    display: inline-block; /* 이미지를 인라인 요소로 표시하여 나란히 정렬 */
+}
 
-        .modal_overlay {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            left: 0;
-            top: 0;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(1.5px);
-            -webkit-backdrop-filter: blur(1.5px);
-        }
+.modal_overlay {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(1.5px);
+    -webkit-backdrop-filter: blur(1.5px);
+}
 
-        .modal_window {
-            background: white;
-            backdrop-filter: blur(13.5px);
-            -webkit-backdrop-filter: blur(13.5px);
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            width: 1000px;
-            height: 600px;
-            position: relative;
-            padding: 10px;
-        }
+.modal_window {
+    background: white;
+    backdrop-filter: blur(13.5px);
+    -webkit-backdrop-filter: blur(13.5px);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    width: 1000px;
+    height: 600px;
+    position: relative;
+    padding: 10px;
+}
 
-        .img_upload_space img {
-            max-width: 100%;
-            max-height: 100%;
-        }
+.img_upload_space img {
+    max-width: 100%;
+    max-height: 100%;
+}
 
-        .modal_content {
-            display: flex;
-            width: 100%;
-            height: 100%;
-        }
+.modal_content {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
 
-        .image_section {
-            width: 50%;
-            height: 100%;
-        }
+.image_section {
+    width: 50%;
+    height: 100%;
+}
 
-        .image_section img {
-            max-width: 100%;
-            max-height: 100%;
-        }
+.image_section img {
+    max-width: 100%;
+    max-height: 100%;
+}
 
-        .info_section {
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 50%;
-            height: 100%;
-            overflow: auto; /* 내용이 넘칠 경우 스크롤 표시 */
-        }
+.info_section {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50%;
+    height: 100%;
+    overflow: auto; /* 내용이 넘칠 경우 스크롤 표시 */
+}
 
-        .modal_close {
-            cursor: pointer;
-            display: flex;
-            justify-content: flex-end;
-        }
-    </style>
+.modal_close {
+    cursor: pointer;
+    display: flex;
+    justify-content: flex-end;
+}
 
-    <h1>내가 작성한 모든 글</h1>
-    <hr>
-    <div style="text-align: center;">
-        {% for post in user_posts %}
-            {% if forloop.counter0|divisibleby:3 %}
-                <br> <!-- 3개의 이미지를 표시한 후 줄 바꿈 -->
-            {% endif %}
-            <div class="post-image">
-                {% if post.image %}
-                    {% with user_name=post.user.username content=post.content %}
-                        <a href="#" class="image-modal-trigger" data-image-url="{{ post.image }}" data-username="{{ user_name }}" data-content="{{ content }}" data-post-pk="{{ post.pk }}">
-                            <img src="{{ post.image }}" alt="Post Image" style="width: 260px; height: 260px;">
-                        </a>
-                    {% endwith %}
-                {% endif %}
+</style>
+
+<h3>{{ user.real_name }}</h3>
+
+<!--기타 정보-->
+<p>자기소개: {{ user.introduce }}</p>
+<p>성별:
+    {% if user.gender == 'F' %}
+        여성
+    {% elif user.gender == 'M' %}
+        남성
+    {% else %}
+        선택안함
+    {% endif %}
+</p>
+
+{% if user.profile_url %}
+<div class="profile-pic-big">
+    <img src="{{ user.profile_url }}" alt="프로필 사진" style="max-width: 10%;">
+</div>
+{% else %}
+<div class="account-profile-pic">
+    <img src="{% static 'images/none_img.jpg' %}" alt="프로필 사진" width="50px"> 
+</div>
+<p>프로필 사진을 등록하세요.</p>
+{% endif %}
+
+<div>
+<!-- add_box id 속성 추가 -->
+<button id="img_modal" type="button" class="btn btn-primary" data-toggle="modal" data-target="#imgModalCenter" style="width: 150px;">
+    사진변경
+</button>
+
+<!-- model id 속성 추가 -->
+<!-- create feed -->
+<div class="modal fade" id="imgModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">사진 변경</h5>
             </div>
-        {% endfor %}
-    </div>
+            <div class="modal-body">
 
-    <!-- 모달 -->
-    <div id="first_modal" class="modal_overlay">
-        <div class="modal_window">
-            <div class="modal_content">
-                <div class="image_section">
-                    <!-- 이미지 표시 공간 -->
-                    <img id="modal_image">
-                </div>
-                <div class="info_section">
-                    <span class="modal_close material-icons-outlined">close</span>
-                    <p id="user_name"></p> <!-- 유저 이름 표시 -->
-                    <hr>
-                    <p id="post_content"></p> <!-- 포스트 내용 표시 -->
-                    
-                </div>
+                <form method="post" action="{% url "accounts:upload_img" user.id %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="file" name="profile_img">
+                <button type="submit" value='사진올리기' class='btn btn-primary btn-sm'>Upload</button>
+                </form>
+
+                <p>
+                <form class='delete_img' method='post' action="{% url "accounts:delete_img" user.id %}">
+                    {% csrf_token %}
+                    <button type="submit" value='사진삭제' class='btn btn-primary btn-sm'>현재 사진 삭제</button>
+                </form></p>
+            </div>
+
+            <div class="modal-footer">
+                <button id="img_close" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- Button trigger modal -->
+<button id="pro_modal" type="button" class="btn btn-primary" data-toggle="modal" data-target="#ProfileModalCenter" style="width: 150px;">
+    프로필변경
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="ProfileModalCenter" tabindex="-1" role="dialog" aria-labelledby="ProfileModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">프로필 편집</h5>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="{% url 'accounts:profile' user.id %}">
+                    {% csrf_token %}
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>자기소개</td>
+                                <td><input id="intro" type="text" size="40" placeholder="자기소개를 입력하세요" name="introduce" value="{{ user.introduce }}"></td>
+                            </tr>
+                            <tr>
+                                <td>성별</td>
+                                <td>
+                                    <select id="gender" name="gender">
+                                        <option value="M" {% if user.gender == 'M' %} selected {% endif %}>남성</option>
+                                        <option value="F" {% if user.gender == 'F' %} selected {% endif %}>여성</option>
+                                        <option value="O" {% if user.gender == 'O' %} selected {% endif %}>선택안함</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <br>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary"  type="submit">저장</button>
+                        <button id="pro_close" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- 비밀번호 변경 모달 -->
+<button id="pw_modal" type="button" class="btn btn-primary" data-toggle="modal" data-target="#PasswordModalCenter" style="width: 150px;">
+    비밀번호 변경
+</button>
+
+<div class="modal fade" id="PasswordModalCenter" tabindex="-1" role="dialog" aria-labelledby="PasswordModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="PasswordModalLongTitle">비밀번호 변경</h5>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="{% url 'accounts:change_pw' user.id %}">
+                    {% csrf_token %}
+                    <table style=' border: 1px '>
+                        <tbody>
+                            <tr>
+                                <td>현재 비밀번호</td>
+                                <td><input id="current_password" type="password" size="40" placeholder="현재 비밀번호를 입력하세요" name="current_password"></td>
+                            </tr>
+                            <tr>
+                                <td>새로운 비밀번호</td>
+                                <td><input id="new_password1" type="password" size="40" placeholder="새로운 비밀번호를 입력하세요" name="new_password1"></td>
+                            </tr>
+                            <tr>
+                                <td>새로운 비밀번호 확인</td>
+                                <td><input id="new_password2" type="password" size="40" placeholder="새로운 비밀번호를 다시 입력하세요" name="new_password2"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <br>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">변경</button>
+                        <button id="pw_close" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+</div>
+<hr>
+<div style="text-align: center;">
+    {% for post in user_posts %}
+        {% if forloop.counter0|divisibleby:3 %}
+            <br> <!-- 3개의 이미지를 표시한 후 줄 바꿈 -->
+        {% endif %}
+        <div class="post-image">
+            {% if post.image %}
+                {% with user_name=post.user.username content=post.content %}
+                    <a href="#" class="image-modal-trigger" data-image-url="{{ post.image }}" data-username="{{ user_name }}" data-content="{{ content }}" data-post-pk="{{ post.pk }}">
+                        <img src="{{ post.image }}" alt="Post Image" style="width: 260px; height: 260px;">
+                    </a>
+                {% endwith %}
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>
+
+<!-- 모달 -->
+<div id="first_modal" class="modal_overlay">
+    <div class="modal_window">
+        <div class="modal_content">
+            <div class="image_section">
+                <!-- 이미지 표시 공간 -->
+                <img id="modal_image">
+            </div>
+            <div class="info_section">
+                <span class="modal_close material-icons-outlined">close</span>
+                <p id="user_name"></p> <!-- 유저 이름 표시 -->
+                <hr>
+                <p id="post_content"></p> <!-- 포스트 내용 표시 -->
+                
             </div>
         </div>
     </div>
+</div>
 
-    <!-- JavaScript -->
-    <script>
-        $(document).ready(function () {
-            $(".image-modal-trigger").click(function (e) {
-                e.preventDefault(); // 기본 동작 중단
-                var imageUrl = $(this).data('image-url'); // 클릭한 이미지의 URL 가져오기
-                var userName = $(this).data('username'); // 클릭한 이미지의 유저 이름 가져오기
-                var postContent = $(this).data('content'); // 클릭한 이미지의 포스트 내용 가져오기
-        
-                // 모달에 이미지, 유저 이름, 글 내용 표시
-                $("#modal_image").attr("src", imageUrl);
-                $("#user_name").text(userName);
-                $("#post_content").text(postContent);
-        
-                // 모달 표시
-                $("#first_modal").css({display: 'flex'});
-            });
-        
-            $(".modal_close").click(function () {
-                $('#first_modal').css({display: 'none'});
-            });
+<!-- JavaScript -->
+<script>
+    $(document).ready(function () {
+        $(".image-modal-trigger").click(function (e) {
+            e.preventDefault(); // 기본 동작 중단
+            var imageUrl = $(this).data('image-url'); // 클릭한 이미지의 URL 가져오기
+            var userName = $(this).data('username'); // 클릭한 이미지의 유저 이름 가져오기
+            var postContent = $(this).data('content'); // 클릭한 이미지의 포스트 내용 가져오기
+    
+            // 모달에 이미지, 유저 이름, 글 내용 표시
+            $("#modal_image").attr("src", imageUrl);
+            $("#user_name").text(userName);
+            $("#post_content").text(postContent);
+    
+            // 모달 표시
+            $("#first_modal").css({display: 'flex'});
         });
-    </script>
+    
+        $(".modal_close").click(function () {
+            $('#first_modal').css({display: 'none'});
+        });
+    });
+</script>
 {% endblock %}
+
+{% block script %}
+<script>
+    // 프로필 편집 클릭
+    document.querySelector('#pro_modal').addEventListener('click', function() {
+        $('#ProfileModalCenter').modal('show');
+    });
+    // 프로필 편집 닫기
+    document.querySelector('#pro_close').addEventListener('click', function() {
+        $('#ProfileModalCenter').modal('hide');
+    });
+    // 비밀번호 변경 클릭
+    document.querySelector('#pw_modal').addEventListener('click', function() {
+        $('#PasswordModalCenter').modal('show');
+    });
+    // 비밀번호 변경 닫기
+    document.querySelector('#pw_close').addEventListener('click', function() {
+        $('#PasswordModalCenter').modal('hide');
+    });
+    // 사진편집 변경 클릭
+    document.querySelector('#img_modal').addEventListener('click', function() {
+        $('#imgModalCenter').modal('show');
+    });
+    // 사진편집 변경 닫기
+    document.querySelector('#img_close').addEventListener('click', function() {
+        $('#imgModalCenter').modal('hide');
+    });
+</script>
+{% endblock script %}

@@ -30,8 +30,8 @@
                 </div>
 
                 <div class="posts">
-                    {% if posts %}
-                    {% for post in posts %}
+                    {% if posts_with_time %}
+                    {% for post, time_since_created in posts_with_time %}
                     <div class="post-home">
                         <div class="info">
                             <div class="user">
